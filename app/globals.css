@@ -1,0 +1,127 @@
+@import "tailwindcss";
+
+/* ---------- Theme (ported from legacy index.html) ----------
+ * Pink accents, light / dark palette, card + shadow tokens.
+ * Dark is the default (follows system) and can be forced via
+ * `data-theme="dark"` on <html>; `data-theme="light"` forces light.
+ */
+
+:root {
+  color-scheme: light;
+  --paper: #ffffff;
+  --ground: #eceef3;
+  --world-a: #ffffff;
+  --world-b: #eef1f7;
+  --soft: #fce8ef;
+  --pink: #f41c5e;
+  --deep: #d91652;
+  --ink: #182033;
+  --muted: #8a7e86;
+  --line: rgba(24, 32, 51, 0.1);
+  --line-strong: rgba(24, 32, 51, 0.16);
+  --card: #ffffff;
+  --shadow: 0 18px 40px -22px rgba(24, 32, 51, 0.45);
+
+  /* legacy alias so existing styles that referenced these still work */
+  --background: var(--paper);
+  --foreground: var(--ink);
+  --slate-quiet: var(--muted);
+}
+
+:root:not([data-theme="light"]) {
+  @media (prefers-color-scheme: dark) {
+    color-scheme: dark;
+    --paper: #15111a;
+    --ground: #1a141f;
+    --world-a: #171219;
+    --world-b: #221824;
+    --soft: #3a2330;
+    --pink: #ff3d72;
+    --deep: #ff6c95;
+    --ink: #f4edf1;
+    --muted: #a598a1;
+    --line: rgba(255, 255, 255, 0.12);
+    --line-strong: rgba(255, 255, 255, 0.2);
+    --card: #1d1622;
+    --shadow: 0 18px 44px -20px rgba(0, 0, 0, 0.7);
+  }
+}
+
+:root[data-theme="dark"] {
+  color-scheme: dark;
+  --paper: #15111a;
+  --ground: #1a141f;
+  --world-a: #171219;
+  --world-b: #221824;
+  --soft: #3a2330;
+  --pink: #ff3d72;
+  --deep: #ff6c95;
+  --ink: #f4edf1;
+  --muted: #a598a1;
+  --line: rgba(255, 255, 255, 0.12);
+  --line-strong: rgba(255, 255, 255, 0.2);
+  --card: #1d1622;
+  --shadow: 0 18px 44px -20px rgba(0, 0, 0, 0.7);
+}
+
+@theme inline {
+  --color-background: var(--paper);
+  --color-foreground: var(--ink);
+  --color-pink: var(--pink);
+  --color-deep: var(--deep);
+  --color-soft: var(--soft);
+  --color-card: var(--card);
+  --color-muted: var(--muted);
+  --color-ink: var(--ink);
+  --color-line: var(--line);
+  --font-sans: var(--font-manrope);
+  --font-display: var(--font-bricolage);
+  --font-mono: var(--font-geist-mono);
+}
+
+html,
+body {
+  background: var(--paper);
+  color: var(--ink);
+  font-family: var(--font-manrope), ui-sans-serif, system-ui, -apple-system,
+    "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  overscroll-behavior: none;
+  transition: background-color 0.4s ease, color 0.4s ease;
+}
+
+html,
+body {
+  overflow-x: hidden;
+  overscroll-behavior-x: none;
+}
+
+:root {
+  --safe-top: env(safe-area-inset-top, 0px);
+  --safe-bottom: env(safe-area-inset-bottom, 0px);
+  --safe-left: env(safe-area-inset-left, 0px);
+  --safe-right: env(safe-area-inset-right, 0px);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+:focus-visible {
+  outline: 2px solid var(--pink);
+  outline-offset: 2px;
+  border-radius: 2px;
+}
+
+.font-display {
+  font-family: var(--font-bricolage), "Bricolage Grotesque", serif;
+  letter-spacing: -0.02em;
+}

@@ -2,10 +2,10 @@
   "version": "0.0.1",
   "configurations": [
     {
-      "name": "journey-3d",
+      "name": "journey-dev",
       "runtimeExecutable": "npm",
-      "runtimeArgs": ["run", "dev"],
-      "port": 5178
+      "runtimeArgs": ["run", "dev", "--", "--port", "3018"],
+      "port": 3018
     }
   ]
 }
