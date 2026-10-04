@@ -1,5 +1,6 @@
 "use client";
 
+import { STOPS, goToStop } from "@/lib/stops";
 import { Html } from "@react-three/drei";
 import { useFrame, useThree } from "@react-three/fiber";
 import { useEffect, useMemo, useRef, useState } from "react";
@@ -127,6 +128,10 @@ function mobileLabel(id: string, full: string): string {
 // ---------------- Signature Tower direct-entry ----------------
 
 function activate(building: BuildingSpec) {
+  if (building.id === "fisherman-cove") {
+    goToStop(STOPS.findIndex((s) => s.key === "fisherman-cove"));
+    return;
+  }
   if (building.directEntry && building.floors.length === 1 && building.floors[0].rooms.length === 1) {
     const room = building.floors[0].rooms[0];
     setFocus({

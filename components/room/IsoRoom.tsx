@@ -618,6 +618,214 @@ function DiningRoom({ fa, fb, wh }: { fa: number; fb: number; wh: number }) {
   );
 }
 
+// ---------------- Fisherman Cove · open-air dinner pavilion ----------------
+
+const TIMBER = "#4A3526";
+const CREAM = "#F0E4C9";
+
+function Palm({ a, b, h = 2.4 }: { a: number; b: number; h?: number }) {
+  const base = wp(a, b, 0);
+  const top = wp(a, b, h);
+  const lean = 7;
+  const fronds: [number, number][] = [
+    [-34, 10], [-24, 0], [-10, -8], [10, -8], [26, 0], [36, 10], [-4, 16], [14, 16],
+  ];
+  return (
+    <g>
+      <ellipse cx={base[0]} cy={base[1] + 3} rx={13} ry={5} fill="rgba(33,26,35,.16)" />
+      <path
+        d={`M${base[0]} ${base[1]} Q${base[0] + lean} ${(base[1] + top[1]) / 2} ${top[0] + lean * 0.6} ${top[1]}`}
+        stroke="#6A4A32"
+        strokeWidth={5}
+        fill="none"
+        strokeLinecap="round"
+      />
+      {fronds.map(([dx, dy], i) => (
+        <path
+          key={i}
+          d={`M${top[0] + lean * 0.6} ${top[1]} Q${top[0] + lean * 0.6 + dx * 0.5} ${top[1] + dy - 16} ${top[0] + lean * 0.6 + dx} ${top[1] + dy + 8}`}
+          stroke={i % 2 ? "#3F7A4A" : "#5C9A5E"}
+          strokeWidth={3.4}
+          fill="none"
+          strokeLinecap="round"
+        />
+      ))}
+    </g>
+  );
+}
+
+function CreamChair({ a, b, face }: { a: number; b: number; face: "n" | "s" }) {
+  const seat = 0.62;
+  const top = 0.5;
+  const stripes = [0.16, 0.31, 0.46];
+  return (
+    <g>
+      {face === "n" && <Box a={a - seat / 2} b={b - seat / 2} w={seat} d={0.1} h={0.8} up={0.5} color={CREAM} />}
+      <Box a={a - seat / 2} b={b - seat / 2} w={seat} d={seat} h={0.12} up={0.38} color="#EADCBC" />
+      {stripes.map((k) => (
+        <polyline
+          key={k}
+          points={pts([wp(a - seat / 2 + k, b - seat / 2, top), wp(a - seat / 2 + k, b + seat / 2, top)])}
+          fill="none"
+          stroke="#B9884F"
+          strokeWidth={1.6}
+        />
+      ))}
+      {face === "s" && <Box a={a - seat / 2} b={b + seat / 2 - 0.1} w={seat} d={0.1} h={0.8} up={0.5} color={CREAM} />}
+    </g>
+  );
+}
+
+function CandleLamp({ a, b }: { a: number; b: number }) {
+  const p = wp(a, b, 1.0);
+  return (
+    <g>
+      <ellipse cx={p[0]} cy={p[1] - 6} rx={22} ry={11} fill="rgba(255,196,110,.28)" />
+      <rect x={p[0] - 4} y={p[1] - 13} width={8} height={13} rx={3} fill="rgba(255,244,214,.9)" stroke="#B9884F" strokeWidth={1} />
+      <ellipse cx={p[0]} cy={p[1] - 9} rx={1.8} ry={3} fill="#FFB347" />
+    </g>
+  );
+}
+
+function PavilionRoom({ fa, fb, wh }: { fa: number; fb: number; wh: number }) {
+  const bands: [number, number, string][] = [
+    [0.2, 0.75, "#2C6A98"],
+    [0.75, 1.2, "#4A8DB5"],
+    [1.2, 1.7, "#F6BC98"],
+    [1.7, 2.35, "#A39AC9"],
+    [2.35, wh - 0.2, "#4B5F9E"],
+  ];
+  const northPosts = [-5.6, -2.0, 1.6, 5.2];
+  const westPosts = [-3.6, -0.2, 3.2];
+  const tables = [
+    { a: -4.6, b: -2.4 },
+    { a: -4.6, b: 1.9 },
+    { a: 2.0, b: -2.4 },
+    { a: 2.0, b: 1.9 },
+  ];
+  const TW = 3.0;
+  const TD = 1.3;
+  const th = 0.88;
+  const valanceN = Array.from({ length: Math.ceil((2 * fa) / 1.2) }, (_, i) => -fa + i * 1.2);
+  const valanceW = Array.from({ length: Math.ceil((2 * fb) / 1.2) }, (_, i) => -fb + i * 1.2);
+  const lanterns: [number, number][] = [[-4.4, -1.4], [3.4, -1.4], [-0.6, 2.4]];
+
+  return (
+    <g>
+      {/* Timber deck */}
+      <polygon points={pts([wp(-fa, -fb, 0.012), wp(fa, -fb, 0.012), wp(fa, fb, 0.012), wp(-fa, fb, 0.012)])} fill="#B98B5B" />
+      {Array.from({ length: 15 }, (_, i) => -fb + (i + 1) * 0.7).map((b) => (
+        <polyline key={b} points={pts([wp(-fa, b, 0.02), wp(fa, b, 0.02)])} fill="none" stroke="#9A6F44" strokeWidth={0.9} opacity={0.55} />
+      ))}
+
+      {/* Open sea panorama on both back walls */}
+      {bands.map(([u0, u1, fill]) => (
+        <g key={fill}>
+          {wallRect(-fa + 0.35, fa - 0.35, u0, u1, fb, fill)}
+          {westRect(-fb + 0.35, fb - 0.35, u0, u1, fa, fill)}
+        </g>
+      ))}
+      <ellipse cx={wp(2.5, -fb, 1.3)[0]} cy={wp(2.5, -fb, 1.3)[1]} rx={46} ry={13} fill="rgba(255,224,170,.5)" />
+      {[[-5, 0.5], [-1, 0.95], [3, 0.55], [6, 0.9]].map(([a, u]) => (
+        <polyline key={a} points={pts([wp(a - 0.8, -fb, u), wp(a + 0.8, -fb, u)])} fill="none" stroke="rgba(255,255,255,.55)" strokeWidth={1.6} />
+      ))}
+      {[[-4, 0.6], [0.5, 0.9], [4.5, 0.5]].map(([b, u]) => (
+        <polyline key={b} points={pts([wp(-fa, b - 0.8, u), wp(-fa, b + 0.8, u)])} fill="none" stroke="rgba(255,255,255,.55)" strokeWidth={1.6} />
+      ))}
+      {northPosts.map((a) => (
+        <g key={`pn${a}`}>{wallRect(a - 0.1, a + 0.1, 0.1, wh - 0.1, fb, TIMBER)}</g>
+      ))}
+      {westPosts.map((b) => (
+        <g key={`pw${b}`}>{westRect(b - 0.1, b + 0.1, 0.1, wh - 0.1, fa, TIMBER)}</g>
+      ))}
+
+      {/* Canopy valance along both wall tops */}
+      {wallRect(-fa, fa, wh - 0.22, wh, fb, "#F6EBD3")}
+      {westRect(-fb, fb, wh - 0.22, wh, fa, "#EADBBC")}
+      {valanceN.map((a0, i) => {
+        const a1 = Math.min(a0 + 1.2, fa);
+        return (
+          <polygon
+            key={`vn${i}`}
+            points={pts([wp(a0, -fb, wh - 0.22), wp(a1, -fb, wh - 0.22), wp((a0 + a1) / 2, -fb, wh - 0.85)])}
+            fill={i % 2 ? "#F6EBD3" : "#EFDDB8"}
+          />
+        );
+      })}
+      {valanceW.map((b0, i) => {
+        const b1 = Math.min(b0 + 1.2, fb);
+        return (
+          <polygon
+            key={`vw${i}`}
+            points={pts([wp(-fa, b0, wh - 0.22), wp(-fa, b1, wh - 0.22), wp(-fa, (b0 + b1) / 2, wh - 0.85)])}
+            fill={i % 2 ? "#EADBBC" : "#E3D1AB"}
+          />
+        );
+      })}
+
+      {/* String lights */}
+      <polyline
+        points={pts(Array.from({ length: 13 }, (_, i) => {
+          const a = -fa + 0.6 + (i * (2 * fa - 1.2)) / 12;
+          return wp(a, -fb + 0.05, 2.7 - Math.sin((i / 12) * Math.PI) * 0.35);
+        }))}
+        fill="none"
+        stroke="#6A4A32"
+        strokeWidth={1}
+      />
+      {Array.from({ length: 13 }, (_, i) => {
+        const a = -fa + 0.6 + (i * (2 * fa - 1.2)) / 12;
+        const p = wp(a, -fb + 0.05, 2.7 - Math.sin((i / 12) * Math.PI) * 0.35);
+        return <circle key={i} cx={p[0]} cy={p[1] + 3} r={2.6} fill="#FFE29A" />;
+      })}
+
+      <Palm a={fa - 1.3} b={-fb + 1.2} />
+
+      {/* Tables, cream striped-cushion chairs, candle lamps */}
+      {tables.map(({ a, b }) => (
+        <g key={`${a}-${b}`}>
+          {[0.5, 1.5, 2.5].map((k) => (
+            <CreamChair key={`n${k}`} a={a + k} b={b - 0.55} face="n" />
+          ))}
+          <ellipse cx={wp(a + TW / 2, b + TD / 2)[0]} cy={wp(a + TW / 2, b + TD / 2)[1] + 8} rx={74} ry={26} fill="rgba(33,26,35,.14)" />
+          {[[0.1, 0.1], [TW - 0.26, 0.1], [0.1, TD - 0.26], [TW - 0.26, TD - 0.26]].map(([la, lb]) => (
+            <Box key={`${la}-${lb}`} a={a + la} b={b + lb} w={0.16} d={0.16} h={th} color="#33241A" />
+          ))}
+          <Box a={a} b={b} w={TW} d={TD} h={0.12} up={th} color={TIMBER} />
+          {[0.7, 2.3].map((k) => (
+            <ellipse key={k} cx={wp(a + k, b + 0.35, th + 0.14)[0]} cy={wp(a + k, b + 0.35, th + 0.14)[1]} rx={7} ry={3} fill="#FBF7F4" stroke="#D8BE82" strokeWidth={0.8} />
+          ))}
+          {[0.7, 2.3].map((k) => (
+            <ellipse key={`s${k}`} cx={wp(a + k, b + 0.95, th + 0.14)[0]} cy={wp(a + k, b + 0.95, th + 0.14)[1]} rx={7} ry={3} fill="#FBF7F4" stroke="#D8BE82" strokeWidth={0.8} />
+          ))}
+          <CandleLamp a={a + TW / 2} b={b + TD / 2} />
+          {[0.5, 1.5, 2.5].map((k) => (
+            <CreamChair key={`s${k}`} a={a + k} b={b + TD + 0.55} face="s" />
+          ))}
+        </g>
+      ))}
+
+      {/* Hanging lanterns */}
+      {lanterns.map(([a, b]) => {
+        const top = wp(a, b, wh);
+        const bot = wp(a, b, 2.5);
+        return (
+          <g key={`l${a}`}>
+            <line x1={top[0]} y1={top[1]} x2={bot[0]} y2={bot[1] - 14} stroke="#6A4A32" strokeWidth={1.3} />
+            <ellipse cx={bot[0]} cy={bot[1]} rx={30} ry={20} fill="rgba(255,206,120,.22)" />
+            <rect x={bot[0] - 8} y={bot[1] - 14} width={16} height={22} rx={4} fill="#FFD98A" stroke="#6A4A32" strokeWidth={1.6} />
+            <line x1={bot[0]} y1={bot[1] - 14} x2={bot[0]} y2={bot[1] + 8} stroke="#6A4A32" strokeWidth={1} />
+            <rect x={bot[0] - 10} y={bot[1] - 17} width={20} height={4} rx={1.5} fill="#6A4A32" />
+          </g>
+        );
+      })}
+
+      <Palm a={-fa + 1.3} b={fb - 1.3} h={2.1} />
+      <Palm a={fa - 1.3} b={fb - 1.3} h={2.2} />
+    </g>
+  );
+}
+
 /** Solid badge colour behind each prop glyph (white glyph on top). */
 const PROP_SOLID: Record<SessionProp, string> = {
   reception: "#C2185B",
@@ -632,6 +840,7 @@ const PROP_SOLID: Record<SessionProp, string> = {
   hexcloud: "#455A64",
   casefiles: "#6D4C41",
   contextstack: "#1B1B2F",
+  candle: "#A8570F",
 };
 
 const ACCENT = "#FFD54F";
@@ -804,6 +1013,16 @@ function PropGlyph({ type }: { type: SessionProp }) {
           <polygon points="10,-14 18,-14 18,-4 14,-8 10,-4" fill={PINK} />
         </g>
       );
+    case "candle":
+      // Hurricane candle lamp for the dinner.
+      return (
+        <g>
+          <path d="M-7 -16 A7 7 0 0 1 7 -16" fill="none" stroke={c} strokeWidth={2.4} strokeLinecap="round" />
+          <rect x={-10} y={-14} width={20} height={24} rx={7} fill="none" stroke={c} strokeWidth={3} />
+          <path d="M0 -9 C-5 -3 -4 4 0 5 C4 4 5 -3 0 -9 Z" fill={PINK} />
+          <rect x={-13} y={10} width={26} height={6} rx={2.5} fill={c} />
+        </g>
+      );
     case "contextstack":
       // Stacked context layers inside focus brackets.
       return (
@@ -833,6 +1052,7 @@ const PROP_LABELS: Record<SessionProp, string> = {
   hexcloud: "GCP",
   casefiles: "GCP Cases",
   contextstack: "Context",
+  candle: "Dinner",
 };
 
 const PILLAR_H = 24;
@@ -1020,7 +1240,7 @@ function NavPanel({
         {active.time}
       </p>
       <dl className="mt-2 grid grid-cols-[4.2rem_1fr] gap-x-2 gap-y-0.5 text-[11.5px]" style={{ color: "#5c5160" }}>
-        <dt className="font-bold" style={{ color: INK }}>Speaker</dt>
+        <dt className="font-bold" style={{ color: INK }}>{room.peopleLabel ?? "Speaker"}</dt>
         <dd>{active.speaker ?? "To be confirmed"}</dd>
         <dt className="font-bold" style={{ color: INK }}>Where</dt>
         <dd>{place}</dd>
@@ -1134,7 +1354,8 @@ export default function IsoRoom({
     return () => window.removeEventListener("keydown", onKey);
   }, [modal]);
 
-  const dining = room.type === "dining";
+  const pavilion = room.type === "pavilion";
+  const dining = room.type === "dining" || pavilion;
   const fa = dining ? 8.2 : room.type === "odc" ? 6.6 : 7.4;
   const fb = dining ? 5.6 : room.type === "odc" ? 5.4 : 7.6;
   const wh = 3.4;
@@ -1175,6 +1396,8 @@ export default function IsoRoom({
   const place =
     room.buildingId === "signature-tower"
       ? "Signature Tower · Executive Dining"
+      : room.buildingId === "fisherman-cove"
+        ? "Fisherman Cove · Dinner Pavilion"
       : room.buildingId === "eb5"
         ? "EB5 · H&M ODC"
         : `EB3 · ${room.name}`;
@@ -1294,7 +1517,7 @@ export default function IsoRoom({
                 <dl className="mt-4 grid grid-cols-[84px_1fr] gap-x-3 gap-y-3 text-[14px]" style={{ color: "#5c5160" }}>
                   <dt className="font-bold" style={{ color: INK }}>Timing</dt>
                   <dd className="font-bold tabular-nums" style={{ color: PINK }}>{active.time}</dd>
-                  <dt className="font-bold" style={{ color: INK }}>Speaker</dt>
+                  <dt className="font-bold" style={{ color: INK }}>{room.peopleLabel ?? "Speaker"}</dt>
                   <dd>{active.speaker ?? "To be confirmed"}</dd>
                   <dt className="font-bold" style={{ color: INK }}>Location</dt>
                   <dd>{place}</dd>
@@ -1310,7 +1533,7 @@ export default function IsoRoom({
       <div ref={stageRef} className="absolute inset-0">
         <svg width="100%" height="100%" className="block">
           <g className="room-cam" transform={`translate(${frame.tx.toFixed(1)} ${frame.ty.toFixed(1)}) scale(${frame.sc.toFixed(3)})`}>
-            <Shell fa={fa} fb={fb} wh={wh} dining={dining} />
+            <Shell fa={fa} fb={fb} wh={wh} dining={room.type === "dining"} />
             {room.type === "boardroom" && (
               <>
                 <BoardDressing fb={fb} fa={fa} />
@@ -1318,7 +1541,8 @@ export default function IsoRoom({
               </>
             )}
             {room.type === "odc" && <OdcDressing fb={fb} fa={fa} />}
-            {dining && <DiningRoom fa={fa} fb={fb} wh={wh} />}
+            {room.type === "dining" && <DiningRoom fa={fa} fb={fb} wh={wh} />}
+            {pavilion && <PavilionRoom fa={fa} fb={fb} wh={wh} />}
             {room.sessions.map((session, i) => {
               const slot = session.propSlot;
               const isActive = session.id === active?.id;

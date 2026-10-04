@@ -73,11 +73,14 @@ export const STOPS: Stop[] = [
     key: "fisherman-cove",
     building: "Fisherman Cove",
     label: "Fisherman Cove",
-    meta: dayLine(
-      BUILDINGS["fisherman-cove"]?.subtitle,
-      BUILDINGS["fisherman-cove"]?.external?.time?.replace("—", "–"),
-    ),
-    focus: { level: "building", building: "fisherman-cove" },
+    meta: dayLine("Dinner", span("fisherman-cove-dinner")),
+    focus: {
+      level: "inside",
+      building: "fisherman-cove",
+      floor: 0,
+      roomId: "dinner-pavilion",
+    },
+    agendaRoomId: "fisherman-cove-dinner",
   },
 ];
 

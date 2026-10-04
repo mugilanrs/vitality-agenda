@@ -19,7 +19,8 @@ export type SessionProp =
   | "runcycle"
   | "hexcloud"
   | "casefiles"
-  | "contextstack";
+  | "contextstack"
+  | "candle";
 
 export type AgendaSession = {
   id: string;
@@ -36,7 +37,7 @@ export type AgendaSession = {
   propSlot: readonly [number, number];
 };
 
-export type RoomType = "boardroom" | "odc" | "dining";
+export type RoomType = "boardroom" | "odc" | "dining" | "pavilion";
 
 export type AgendaRoom = {
   id: string;
@@ -47,6 +48,8 @@ export type AgendaRoom = {
   type: RoomType;
   /** Morning and afternoon share BoardRoomScene; only props differ. */
   variant?: "morning" | "afternoon";
+  /** Heading for the people line in pop-ups; defaults to "Speaker". */
+  peopleLabel?: string;
   sessions: AgendaSession[];
 };
 
@@ -181,6 +184,7 @@ export const AGENDA_ROOMS: AgendaRoom[] = [
     roomId: "executive-dining",
     name: "Executive Dining Room",
     type: "dining",
+    peopleLabel: "Hosts",
     sessions: [
       {
         id: "exec-lunch",
@@ -190,6 +194,26 @@ export const AGENDA_ROOMS: AgendaRoom[] = [
         speaker: "H1 / H2 / H3 / H8 / H9 / H10 / H11 / H12",
         prop: "cloche",
         propSlot: [0, 2.9],
+      },
+    ],
+  },
+  {
+    id: "fisherman-cove-dinner",
+    buildingId: "fisherman-cove",
+    floor: 0,
+    roomId: "dinner-pavilion",
+    name: "Dinner Pavilion",
+    type: "pavilion",
+    peopleLabel: "Hosts",
+    sessions: [
+      {
+        id: "exec-dinner",
+        time: "6:30 PM — 9:00 PM",
+        title: "Executive Dinner",
+        detail: "Executive Dinner — TCS",
+        speaker: "Hosts to be confirmed",
+        prop: "candle",
+        propSlot: [0, 0],
       },
     ],
   },
