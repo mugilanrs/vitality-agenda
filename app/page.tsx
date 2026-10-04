@@ -9,7 +9,6 @@ import WelcomeIntro from "@/components/ui/WelcomeIntro";
 import AgendaOverlay from "@/components/ui/AgendaOverlay";
 import BrandMark from "@/components/ui/BrandMark";
 import DebugOverlay from "@/components/ui/DebugOverlay";
-import ThemeToggle from "@/components/ui/ThemeToggle";
 import SideRails from "@/components/ui/SideRails";
 import WebGLBoundary from "@/components/ui/WebGLBoundary";
 
@@ -59,8 +58,6 @@ export default function Home() {
       <AgendaOverlay />
 
       <SideRails />
-
-      <ThemeToggle />
 
       <div
         className="pointer-events-none fixed left-0 top-0 z-40"

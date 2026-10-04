@@ -201,6 +201,10 @@ function westRect(b0: number, b1: number, u0: number, u1: number, fa: number, fi
   );
 }
 
+const WINDOW_GLASS = "#A6D6EE";
+const FRAME = "#59606E";
+const FRAME_LT = "#8B93A3";
+
 function WindowPanel({ a0, a1, u0, u1, fb }: { a0: number; a1: number; u0: number; u1: number; fb: number }) {
   const span = a1 - a0;
   const panes = Math.max(2, Math.round(span / 1.4));
@@ -209,13 +213,18 @@ function WindowPanel({ a0, a1, u0, u1, fb }: { a0: number; a1: number; u0: numbe
   const midU = (u0 + u1) / 2;
   return (
     <g>
-      {wallRect(a0, a1, u0, u1, fb, GLASS)}
-      {wallRect(a0, a1, u0, u0 + 0.08, fb, WALL_2)}
-      {wallRect(a0, a1, u1 - 0.08, u1, fb, WALL_2)}
-      <polyline points={pts([wp(a0, -fb, midU), wp(a1, -fb, midU)])} fill="none" stroke={WALL_2} strokeWidth={1.4} />
+      {wallRect(a0 - 0.12, a1 + 0.12, u0 - 0.16, u1 + 0.12, fb, FRAME)}
+      {wallRect(a0, a1, u0, u1, fb, WINDOW_GLASS)}
+      <polygon
+        points={pts([wp(a0 + 0.2, -fb, u0 + 0.15), wp(a0 + 0.75, -fb, u0 + 0.15), wp(a0 + 1.5, -fb, u1 - 0.15), wp(a0 + 0.95, -fb, u1 - 0.15)])}
+        fill="#FFFFFF"
+        opacity={0.38}
+      />
+      <polyline points={pts([wp(a0, -fb, midU), wp(a1, -fb, midU)])} fill="none" stroke={FRAME} strokeWidth={2} />
       {mullions.map((a) => (
-        <polyline key={a} points={pts([wp(a, -fb, u0), wp(a, -fb, u1)])} fill="none" stroke={WALL_2} strokeWidth={1.8} />
+        <polyline key={a} points={pts([wp(a, -fb, u0), wp(a, -fb, u1)])} fill="none" stroke={FRAME} strokeWidth={2.4} />
       ))}
+      {wallRect(a0 - 0.25, a1 + 0.25, u0 - 0.26, u0 - 0.14, fb, FRAME_LT)}
     </g>
   );
 }
@@ -228,26 +237,35 @@ function WestWindowPanel({ b0, b1, u0, u1, fa }: { b0: number; b1: number; u0: n
   const midU = (u0 + u1) / 2;
   return (
     <g>
-      {westRect(b0, b1, u0, u1, fa, GLASS)}
-      {westRect(b0, b1, u0, u0 + 0.08, fa, WALL_2)}
-      {westRect(b0, b1, u1 - 0.08, u1, fa, WALL_2)}
-      <polyline points={pts([wp(-fa, b0, midU), wp(-fa, b1, midU)])} fill="none" stroke={WALL_2} strokeWidth={1.4} />
+      {westRect(b0 - 0.12, b1 + 0.12, u0 - 0.16, u1 + 0.12, fa, FRAME)}
+      {westRect(b0, b1, u0, u1, fa, WINDOW_GLASS)}
+      <polygon
+        points={pts([wp(-fa, b0 + 0.2, u0 + 0.15), wp(-fa, b0 + 0.75, u0 + 0.15), wp(-fa, b0 + 1.5, u1 - 0.15), wp(-fa, b0 + 0.95, u1 - 0.15)])}
+        fill="#FFFFFF"
+        opacity={0.38}
+      />
+      <polyline points={pts([wp(-fa, b0, midU), wp(-fa, b1, midU)])} fill="none" stroke={FRAME} strokeWidth={2} />
       {mullions.map((b) => (
-        <polyline key={b} points={pts([wp(-fa, b, u0), wp(-fa, b, u1)])} fill="none" stroke={WALL_2} strokeWidth={1.8} />
+        <polyline key={b} points={pts([wp(-fa, b, u0), wp(-fa, b, u1)])} fill="none" stroke={FRAME} strokeWidth={2.4} />
       ))}
+      {westRect(b0 - 0.25, b1 + 0.25, u0 - 0.26, u0 - 0.14, fa, FRAME_LT)}
     </g>
   );
 }
 
+const AC_BODY = "#C7CCD8";
+const AC_EDGE = "#6E7586";
+
 function AcUnit({ a, fb }: { a: number; fb: number }) {
   return (
     <g>
-      <polygon points={pts([wp(a - 1.0, -fb, 2.65), wp(a + 1.0, -fb, 2.65), wp(a + 1.0, -fb, 3.1), wp(a - 1.0, -fb, 3.1)])} fill={PAPER} />
-      <polygon points={pts([wp(a - 1.0, -fb, 2.65), wp(a + 1.0, -fb, 2.65), wp(a + 1.0, -fb, 2.72), wp(a - 1.0, -fb, 2.72)])} fill={WALL_2} />
-      {[-0.5, 0, 0.5].map((d) => (
-        <polyline key={d} points={pts([wp(a + d - 0.3, -fb, 2.82), wp(a + d + 0.3, -fb, 2.82)])} fill="none" stroke="#C9BCC2" strokeWidth={1} />
+      {wallRect(a - 1.1, a + 1.1, 2.6, 3.2, fb, AC_EDGE)}
+      {wallRect(a - 1.04, a + 1.04, 2.66, 3.14, fb, AC_BODY)}
+      {wallRect(a - 1.04, a + 1.04, 2.66, 2.78, fb, "#8D95A6")}
+      {[-0.55, -0.18, 0.18, 0.55].map((d) => (
+        <polyline key={d} points={pts([wp(a + d - 0.14, -fb, 2.9), wp(a + d + 0.14, -fb, 2.9)])} fill="none" stroke="#4B5262" strokeWidth={1.6} />
       ))}
-      <circle cx={wp(a + 0.6, -fb, 2.88)[0]} cy={wp(a + 0.6, -fb, 2.88)[1]} r={2} fill={GREEN} />
+      <circle cx={wp(a + 0.8, -fb, 3.04)[0]} cy={wp(a + 0.8, -fb, 3.04)[1]} r={2.6} fill="#2FBF71" />
     </g>
   );
 }
@@ -255,10 +273,11 @@ function AcUnit({ a, fb }: { a: number; fb: number }) {
 function WestAcUnit({ b, fa }: { b: number; fa: number }) {
   return (
     <g>
-      <polygon points={pts([wp(-fa, b - 0.9, 2.65), wp(-fa, b + 0.9, 2.65), wp(-fa, b + 0.9, 3.1), wp(-fa, b - 0.9, 3.1)])} fill={PAPER} />
-      <polygon points={pts([wp(-fa, b - 0.9, 2.65), wp(-fa, b + 0.9, 2.65), wp(-fa, b + 0.9, 2.72), wp(-fa, b - 0.9, 2.72)])} fill={WALL_2} />
-      {[-0.4, 0, 0.4].map((d) => (
-        <polyline key={d} points={pts([wp(-fa, b + d - 0.25, 2.82), wp(-fa, b + d + 0.25, 2.82)])} fill="none" stroke="#C9BCC2" strokeWidth={1} />
+      {westRect(b - 1.0, b + 1.0, 2.6, 3.2, fa, AC_EDGE)}
+      {westRect(b - 0.94, b + 0.94, 2.66, 3.14, fa, AC_BODY)}
+      {westRect(b - 0.94, b + 0.94, 2.66, 2.78, fa, "#8D95A6")}
+      {[-0.5, -0.17, 0.17, 0.5].map((d) => (
+        <polyline key={d} points={pts([wp(-fa, b + d - 0.12, 2.9), wp(-fa, b + d + 0.12, 2.9)])} fill="none" stroke="#4B5262" strokeWidth={1.6} />
       ))}
     </g>
   );
@@ -815,12 +834,13 @@ const PROP_LABELS: Record<SessionProp, string> = {
   contextstack: "Context",
 };
 
+const PILLAR_H = 24;
 const PILLARS: { x: number; z: number; h: number }[] = [
-  { x: -11, z: -11, h: 17 },
-  { x: 11, z: -11, h: 21 },
-  { x: -11, z: 11, h: 19 },
-  { x: 11, z: 11, h: 15 },
-  { x: 0, z: 0, h: 30 },
+  { x: -11, z: -11, h: PILLAR_H },
+  { x: 11, z: -11, h: PILLAR_H },
+  { x: -11, z: 11, h: PILLAR_H },
+  { x: 11, z: 11, h: PILLAR_H },
+  { x: 0, z: 0, h: PILLAR_H },
 ];
 
 /** An eye above five square pillars (one in the centre) that rotate. */
@@ -885,7 +905,7 @@ function VisionProp({ active }: { active: boolean }) {
           </g>
         );
       })}
-      <g transform="translate(0 -42)">
+      <g transform="translate(0 -38)">
         {active && <circle r={17} fill="none" stroke={PINK} strokeWidth={3} opacity={0.9} />}
         <circle r={13} fill="#FFFFFF" stroke={INK} strokeWidth={3.5} />
         <path d="M-7 0 C-4 -5 4 -5 7 0 C4 5 -4 5 -7 0 Z" fill="none" stroke={INK} strokeWidth={1.8} />
@@ -1134,14 +1154,20 @@ export default function IsoRoom({
     const maxX = Math.max(...xs);
     const minY = Math.min(...ys);
     const maxY = Math.max(...ys);
-    const occupy = size.w < 820 ? 0.72 : 0.9;
-    const sc = Math.min((size.w * occupy) / (maxX - minX), (size.h * occupy) / (maxY - minY));
+    const mobile = size.w < 820;
+    // Wide screens: leave the bottom-right corner to the navigation panel.
+    const panelW = mobile ? 0 : 340 + 40;
+    const availW = size.w - panelW - (mobile ? 0 : 60);
+    const availH = size.h * (mobile ? 0.9 : 0.86);
+    const sc = Math.min((availW * (mobile ? 0.98 : 0.96)) / (maxX - minX), availH / (maxY - minY));
     const cx = (minX + maxX) / 2;
     const cy = (minY + maxY) / 2;
+    const centreX = mobile ? size.w / 2 : 30 + availW / 2;
+    const centreY = mobile ? size.h * 0.46 : size.h * 0.5;
     return {
       sc,
-      tx: size.w / 2 - cx * sc,
-      ty: size.h / 2 - cy * sc,
+      tx: centreX - cx * sc,
+      ty: centreY - cy * sc,
     };
   }, [fa, fb, wh, size.w, size.h]);
 
