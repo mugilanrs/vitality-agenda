@@ -29,7 +29,7 @@ export default function StopNav({ docked = false }: { docked?: boolean }) {
       // a normal row that sits inside its parent (above the room's info panel).
       className={
         docked
-          ? "pointer-events-none fixed top-[69%] -translate-y-1/2 flex flex-row-reverse items-center gap-2 sm:static sm:w-full sm:translate-y-0 sm:justify-between"
+          ? "pointer-events-none fixed left-3 top-3 flex flex-row-reverse items-center justify-between gap-2 sm:static sm:w-full sm:translate-y-0"
           : "pointer-events-none fixed top-[69%] -translate-y-1/2 flex flex-row-reverse items-center gap-2 sm:top-1/2 sm:flex-col sm:items-end sm:gap-2.5"
       }
       style={{
@@ -56,7 +56,7 @@ export default function StopNav({ docked = false }: { docked?: boolean }) {
           type="button"
           onClick={() => goToStop(index - 1)}
           aria-label={`Previous room: ${prev.label}`}
-          className={`pointer-events-auto rounded-2xl border px-3 py-2 text-left shadow-lg sm:px-3.5 sm:py-2.5${docked ? " sm:flex-1" : ""}`}
+          className={`pointer-events-auto rounded-2xl border px-3 py-2 text-left shadow-lg sm:px-3.5 sm:py-2.5${docked ? " sm:flex-1" : ""}${docked && !next ? " max-sm:mr-auto" : ""}`}
           style={{
             background: "rgba(255,255,255,.96)",
             borderColor: "rgba(33,26,35,.15)",

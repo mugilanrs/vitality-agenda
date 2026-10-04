@@ -1401,7 +1401,7 @@ export default function IsoRoom({
     const cx = (minX + maxX) / 2;
     const cy = (minY + maxY) / 2;
     const centreX = mobile ? size.w / 2 : 30 + availW / 2;
-    const centreY = mobile ? size.h * 0.46 : size.h * 0.5;
+    const centreY = mobile ? size.h * 0.5 : size.h * 0.5;
     return {
       sc,
       tx: centreX - cx * sc,
@@ -1435,7 +1435,7 @@ export default function IsoRoom({
         ${propCss}
       `}</style>
 
-      <div className="pointer-events-none absolute left-4 top-4 z-10 flex flex-col items-start gap-2">
+      <div className="pointer-events-none absolute left-3 right-3 top-[3.75rem] z-10 flex flex-row flex-wrap items-center gap-2 sm:left-4 sm:right-auto sm:top-4 sm:flex-col sm:items-start">
         <button
           type="button"
           className="pointer-events-auto rounded-full border px-3.5 py-2 text-[12px] font-bold"
@@ -1454,7 +1454,7 @@ export default function IsoRoom({
             ← Rooms
           </button>
         )}
-        <div className="pointer-events-auto mt-2 flex flex-col gap-2">
+        <div className="pointer-events-auto flex flex-row gap-2 sm:mt-2 sm:flex-col">
           {RAIL_ICONS.map((r) => (
             <div key={r.id} className="relative">
               <button
@@ -1478,7 +1478,7 @@ export default function IsoRoom({
               </button>
               {rail === r.id && (
                 <div
-                  className="absolute left-14 top-0 w-[220px] rounded-2xl border p-3.5"
+                  className="absolute right-0 top-14 z-30 w-[220px] rounded-2xl border p-3.5 sm:left-14 sm:right-auto sm:top-0"
                   style={{ background: "#FFF9FB", borderColor: "rgba(229,143,165,.45)", boxShadow: "0 18px 40px -18px rgba(90,50,70,.5)" }}
                 >
                   <p className="text-[10.5px] font-bold uppercase tracking-[0.18em]" style={{ color: PINK }}>{r.label}</p>
@@ -1665,7 +1665,7 @@ export default function IsoRoom({
         </svg>
       </div>
 
-      <div className="pointer-events-none absolute top-5 w-[min(56vw,560px)] text-right" style={{ right: "4.75rem" }}>
+      <div className="pointer-events-none absolute left-4 right-4 top-[7.1rem] text-left sm:left-auto sm:right-[4.75rem] sm:top-5 sm:w-[min(56vw,560px)] sm:text-right">
         <p className="text-[11px] font-bold uppercase tracking-[0.18em]" style={{ color: PINK }}>
           {place}
         </p>
@@ -1679,7 +1679,7 @@ export default function IsoRoom({
           {active?.time}
         </p>
         {room.sessions.length > 1 && (
-          <div className="pointer-events-auto mt-3 inline-flex items-center gap-2">
+          <div className="pointer-events-auto mt-3 hidden items-center gap-2 sm:inline-flex">
             <button
               type="button"
               className="rounded-full border px-3 py-1 text-xs font-bold"

@@ -262,7 +262,7 @@ function Marker({
     // Safe zone — leave room for the header block / controls at the top (taller
     // on phones where the title wraps), agenda cards at the bottom, and
     // modest side gutters.
-    const safeTop = isMobile ? 156 : 56;
+    const safeTop = isMobile ? 112 : 56;
     const safeBottom = size.height - 72;
     const safeLeft = 12 + halfW;
     const safeRight = size.width - 12 - halfW;

@@ -23,9 +23,8 @@ export default function BrandMark() {
   if (!onCampus) return null;
   return (
     <div
-      // Below 1160px the "Info & options" pill and theme toggle share the top
-      // row, so the header drops beneath them and is width-limited.
-      className="pointer-events-none absolute max-w-[min(20rem,calc(100vw-2.2rem))] min-[1160px]:max-w-none"
+      // Narrow screens: keep clear of the round icons on the right.
+      className="pointer-events-none absolute max-w-[calc(100vw-5.5rem)] min-[1160px]:max-w-none"
       style={{
         top: "var(--brand-top)",
         left: "max(1.1rem, env(safe-area-inset-left))",

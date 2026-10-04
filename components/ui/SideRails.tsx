@@ -20,8 +20,6 @@ export default function SideRails() {
   const [welcome, setWelcome] = useState(journey.welcome);
   const [focus, setFocusState] = useState(() => ({ ...journey.focus }));
   const [openIcon, setOpenIcon] = useState<string | null>(null);
-  const [sheetOpen, setSheetOpen] = useState(false);
-  const [narrow, setNarrow] = useState(false);
 
   useEffect(() => {
     const applyW = () => setWelcome(journey.welcome);
@@ -34,14 +32,6 @@ export default function SideRails() {
       un1();
       un2();
     };
-  }, []);
-
-  useEffect(() => {
-    if (typeof window === "undefined") return;
-    const check = () => setNarrow(window.innerWidth < 1160);
-    check();
-    window.addEventListener("resize", check);
-    return () => window.removeEventListener("resize", check);
   }, []);
 
   if (welcome) return null;
@@ -159,49 +149,10 @@ export default function SideRails() {
     </>
   );
 
-  const sheetContent = (
-    <>
-      <div className="sheet-head">
-        <b>Info &amp; navigation</b>
-        <button
-          type="button"
-          className="sheet-close"
-          onClick={() => setSheetOpen(false)}
-          aria-label="Close"
-        >
-          ×
-        </button>
-      </div>
-      {content}
-    </>
-  );
-
   return (
     <>
       <style jsx global>{railStyles}</style>
-
-      {narrow ? (
-        <>
-          <button
-            type="button"
-            className="menu-btn"
-            onClick={() => setSheetOpen((x) => !x)}
-          >
-            Info &amp; navigation
-          </button>
-          {sheetOpen && (
-            <div
-              className="sheet-backdrop"
-              onClick={() => setSheetOpen(false)}
-            />
-          )}
-          <div className={`railwrap${sheetOpen ? " open" : ""}`}>
-            {sheetContent}
-          </div>
-        </>
-      ) : (
-        content
-      )}
+      {content}
     </>
   );
 }
@@ -429,94 +380,35 @@ const railStyles = `
     transform: translateX(0);
   }
 
-  .railwrap { display: contents; }
-  .menu-btn, .sheet-head, .sheet-backdrop { display: none; }
-
+  /* Tablets and phones: the day-plan / contact icons sit top-right as round
+     icons, and the Navigate card is permanently open along the bottom. */
   @media (max-width: 1160px) {
-    .rail-left, .rail-right {
-      position: static;
-      transform: none;
-      width: auto;
-      left: auto;
-      right: auto;
-    }
-    .rail-icon { display: none; }
-    .rail-item { position: static; }
-    .rail-pop {
-      position: static;
-      width: auto;
-      opacity: 1;
-      visibility: visible;
-      transform: none;
-    }
-    .railwrap {
-      display: flex;
-      flex-direction: column;
-      gap: 12px;
-      position: fixed;
-      left: 0;
-      right: 0;
-      bottom: 0;
-      z-index: 29;
-      max-height: 84vh;
-      overflow-y: auto;
-      -webkit-overflow-scrolling: touch;
-      background: var(--paper);
-      border-radius: 22px 22px 0 0;
-      padding: 14px 16px calc(20px + env(safe-area-inset-bottom, 0px));
-      box-shadow: 0 -22px 55px -20px rgba(0, 0, 0, 0.45);
-      transform: translateY(104%);
-      transition: transform 0.4s cubic-bezier(0.22, 0.9, 0.36, 1);
-    }
-    .railwrap.open { transform: translateY(0); }
-    .sheet-head {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding: 2px 2px 4px;
-    }
-    .sheet-head b {
-      font-family: var(--font-bricolage), "Bricolage Grotesque", serif;
-      font-weight: 800;
-      font-size: 15px;
-    }
-    .sheet-close {
-      width: 30px;
-      height: 30px;
-      border: 0;
-      border-radius: 50%;
-      background: var(--soft);
-      color: var(--deep);
-      font-size: 20px;
-      line-height: 1;
-      cursor: pointer;
-    }
-    .menu-btn {
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      position: fixed;
-      z-index: 28;
+    .rail-left {
       top: calc(14px + env(safe-area-inset-top, 0px));
-      left: 50%;
-      transform: translateX(-50%);
-      font: inherit;
-      font-weight: 700;
-      font-size: 13px;
-      color: var(--ink);
-      background: var(--card);
-      border: 1px solid var(--line);
-      border-radius: 999px;
-      padding: 9px 16px;
-      box-shadow: var(--shadow);
-      cursor: pointer;
+      right: calc(14px + env(safe-area-inset-right, 0px));
+      left: auto;
+      transform: none;
+      width: auto;
+      align-items: flex-end;
+      gap: 10px;
     }
-    .sheet-backdrop {
-      display: block;
-      position: fixed;
-      inset: 0;
-      z-index: 27;
-      background: rgba(10, 14, 24, 0.42);
+    .rail-icon { width: 44px; height: 44px; }
+    .rail-pop {
+      left: auto;
+      right: 54px;
+      width: 230px;
+      transform: translateX(6px);
     }
+    .rail-item.open .rail-pop { transform: translateX(0); }
+    .rail-right {
+      top: auto;
+      transform: none;
+      left: 12px;
+      right: 12px;
+      bottom: calc(12px + env(safe-area-inset-bottom, 0px));
+      width: auto;
+    }
+    .rail-right .rail-card { padding: 12px 13px; }
+    .rail-right .rail-jump button { padding: 5px 8px; }
   }
 `;
