@@ -29,8 +29,8 @@ export type AgendaSession = {
   detail: string;
   /** Overrides the default label under the room prop. */
   label?: string;
-  /** Presenter(s); shown as "to be confirmed" when absent. */
-  speaker?: string;
+  /** Presenters / hosts, one entry per person; "to be confirmed" when absent. */
+  speakers?: readonly string[];
   /** Which floating prop represents this session in the room. */
   prop: SessionProp;
   /** Fixed isometric slot for this session's hotspot [a, b]. */
@@ -53,6 +53,27 @@ export type AgendaRoom = {
   sessions: AgendaSession[];
 };
 
+/** Speaker and host names, keyed by the codes used in the timetable. */
+const H = {
+  H1: "Commander Prasanna Madhu",
+  H2: "Lakshmi Suchetha",
+  H3: "Ranjit Sinha",
+  H4: "Musthafa S",
+  H5: "Ramanthan Murali",
+  H6: "Sri Vidya",
+  H7: "Balasubramanian S",
+  H8: "Ramesh Balan",
+  H9: "K S Krishnamoorthy",
+  H10: "TBC",
+  H11: "TBC",
+  H12: "TBC",
+  H13: "Hemasundara Ponnana",
+  H14: "Kanagaraj Kumar V",
+  H15: "Karthikeyan Murugesan",
+  H16: "Vaithalingam sundram",
+  H17: "Naveen Pathak",
+} as const;
+
 export const AGENDA_ROOMS: AgendaRoom[] = [
   {
     id: "eb3-board-morning",
@@ -68,7 +89,7 @@ export const AGENDA_ROOMS: AgendaRoom[] = [
         time: "10:00 AM — 10:30 AM",
         title: "Welcome & Reception",
         detail: "Welcome & Reception",
-        speaker: "H1 / H2 / H3",
+        speakers: [H.H1, H.H2, H.H3],
         prop: "reception",
         propSlot: [-5.4, 0.5],
       },
@@ -77,7 +98,7 @@ export const AGENDA_ROOMS: AgendaRoom[] = [
         time: "10:30 AM — 10:45 AM",
         title: "TCS AI Vision & Strategy",
         detail: "TCS AI Vision & Strategy",
-        speaker: "H2",
+        speakers: [H.H2],
         prop: "horizon",
         propSlot: [-2.4, -5.2],
       },
@@ -86,7 +107,7 @@ export const AGENDA_ROOMS: AgendaRoom[] = [
         time: "10:45 AM — 11:30 AM",
         title: "AI-Based Product Development",
         detail: "Ideation & Shaping",
-        speaker: "H4 / H5",
+        speakers: [H.H4, H.H5],
         prop: "ideation",
         propSlot: [0.4, -5.2],
       },
@@ -95,7 +116,7 @@ export const AGENDA_ROOMS: AgendaRoom[] = [
         time: "11:30 AM — 12:15 PM",
         title: "Rapid Build",
         detail: "Demo on Product & R&D Focused",
-        speaker: "H6",
+        speakers: [H.H6],
         prop: "sprint",
         propSlot: [5.4, -0.5],
       },
@@ -104,7 +125,7 @@ export const AGENDA_ROOMS: AgendaRoom[] = [
         time: "12:15 PM — 1:00 PM",
         title: "Quality Assurance & Testing Frameworks",
         detail: "Moving Towards AI Compatibility",
-        speaker: "H7",
+        speakers: [H.H7],
         prop: "aishield",
         propSlot: [1.8, 5.0],
       },
@@ -126,7 +147,7 @@ export const AGENDA_ROOMS: AgendaRoom[] = [
         title: "AI Maturity & AI AD — Software Engineering Loop",
         detail:
           "Two sessions:\n1. AI Maturity & Strategic Capabilities — Talent Transformation, Tokenomics, AI Governance\n2. AI AD — Software Engineering Loop",
-        speaker: "H4 / H5",
+        speakers: [H.H4, H.H5],
         prop: "maturityloop",
         propSlot: [-5.4, 0.5],
       },
@@ -135,7 +156,7 @@ export const AGENDA_ROOMS: AgendaRoom[] = [
         time: "3:00 PM — 3:45 PM",
         title: "TCS AI in Action",
         detail: "Demonstrating Level 3 AI Autonomy in H&M Account",
-        speaker: "H13 / H14",
+        speakers: [H.H13, H.H14],
         prop: "autonomy",
         propSlot: [-2.4, -5.2],
       },
@@ -144,7 +165,7 @@ export const AGENDA_ROOMS: AgendaRoom[] = [
         time: "3:45 PM — 4:30 PM",
         title: "TCS AI AMS",
         detail: "Roadmap & Transforming AMS in Vitality (1–2 Year)",
-        speaker: "H13 / H14",
+        speakers: [H.H13, H.H14],
         prop: "runcycle",
         propSlot: [1.0, -5.2],
       },
@@ -153,7 +174,7 @@ export const AGENDA_ROOMS: AgendaRoom[] = [
         time: "4:30 PM — 5:00 PM",
         title: "GCP Capabilities & Partnership",
         detail: "GCP Capabilities & Partnership",
-        speaker: "H15 / H16 / H17",
+        speakers: [H.H15, H.H16, H.H17],
         prop: "hexcloud",
         propSlot: [5.4, -0.5],
       },
@@ -162,7 +183,7 @@ export const AGENDA_ROOMS: AgendaRoom[] = [
         time: "5:00 PM — 5:30 PM",
         title: "GCP Case Study Experience Sharing",
         detail: "EQUIFAX & LBG",
-        speaker: "H15 / H16 / H17",
+        speakers: [H.H15, H.H16, H.H17],
         prop: "casefiles",
         propSlot: [3.4, 4.8],
       },
@@ -171,7 +192,7 @@ export const AGENDA_ROOMS: AgendaRoom[] = [
         time: "5:30 PM — 6:00 PM",
         title: "Unpacking Context Engineering Squad",
         detail: "Unpacking Context Engineering Squad",
-        speaker: "H8",
+        speakers: [H.H8],
         prop: "contextstack",
         propSlot: [-2.6, 4.8],
       },
@@ -191,7 +212,7 @@ export const AGENDA_ROOMS: AgendaRoom[] = [
         time: "1:00 PM — 2:00 PM",
         title: "Lunch, Meet & Greet",
         detail: "Lunch, Meet & Greet",
-        speaker: "H1 / H2 / H3 / H8 / H9 / H10 / H11 / H12",
+        speakers: [H.H1, H.H2, H.H3, H.H8, H.H9, H.H10, H.H11, H.H12],
         prop: "cloche",
         propSlot: [0, 2.9],
       },
@@ -211,7 +232,7 @@ export const AGENDA_ROOMS: AgendaRoom[] = [
         time: "6:30 PM — 9:00 PM",
         title: "Executive Dinner",
         detail: "Executive Dinner — TCS",
-        speaker: "Hosts to be confirmed",
+        speakers: ["Hosts to be confirmed"],
         prop: "candle",
         propSlot: [0, 0],
       },

@@ -117,16 +117,28 @@ export default function WelcomeIntro() {
           animation: "welcomeFloat 900ms cubic-bezier(0.22, 1, 0.36, 1)",
         }}
       >
+        {/* The clouds are always white, so the text uses fixed dark colours
+            (not theme tokens, which turn near-white in dark mode) and sits on
+            a soft light scrim so it never gets lost in a gap between clouds. */}
         <div
-          className="text-[12px] font-bold uppercase tracking-[0.24em]"
-          style={{ color: "var(--pink)" }}
+          aria-hidden
+          className="pointer-events-none absolute -inset-x-10 -inset-y-12 -z-10"
+          style={{
+            background:
+              "radial-gradient(closest-side, rgba(255,255,255,.92) 0%, rgba(255,255,255,.78) 55%, rgba(255,255,255,0) 100%)",
+            filter: "blur(6px)",
+          }}
+        />
+        <div
+          className="text-[12px] font-extrabold uppercase tracking-[0.24em]"
+          style={{ color: "#A3104A" }}
         >
           A day across the TCS Siruseri
         </div>
         <h1
           className="font-display mt-3 text-5xl font-extrabold md:text-6xl"
           style={{
-            color: "var(--ink)",
+            color: "#182033",
             lineHeight: 1.02,
             letterSpacing: "-0.02em",
             textWrap: "balance",
@@ -137,13 +149,13 @@ export default function WelcomeIntro() {
         <div
           className="mt-6 inline-flex items-center gap-2 text-sm font-semibold"
           style={{
-            color: "var(--muted)",
+            color: "#3B3340",
             animation: "tapPulse 1.8s ease-in-out infinite",
           }}
         >
           <span
             className="inline-block h-2 w-2 rounded-full"
-            style={{ background: "var(--pink)" }}
+            style={{ background: "#D81B60" }}
           />
           Tap to continue
         </div>

@@ -1203,6 +1203,22 @@ function buildPropStyles(count: number) {
   return css;
 }
 
+/** One person per line, exactly as given (no commas or slashes). */
+function PeopleList({ names }: { names?: readonly string[] }) {
+  if (!names || names.length === 0) return <>To be confirmed</>;
+  return (
+    <ul className="m-0 flex list-none flex-col gap-0.5 p-0">
+      {names.map((n, i) => (
+        <li key={`${n}-${i}`}>{n}</li>
+      ))}
+    </ul>
+  );
+}
+
+function peopleHeading(room: AgendaRoom, names?: readonly string[]) {
+  return room.peopleLabel ?? ((names?.length ?? 0) > 1 ? "Speakers" : "Speaker");
+}
+
 function startTime(time: string) {
   return time.split("—")[0]?.trim() ?? time;
 }
@@ -1224,7 +1240,7 @@ function NavPanel({
   const go = (i: number) => setActiveSession(sessions[(i + sessions.length) % sessions.length].id);
   return (
     <div
-      className="pointer-events-auto w-full rounded-[18px] border p-3.5"
+      className="pointer-events-auto max-h-[72vh] w-full overflow-y-auto rounded-[18px] border p-3.5"
       style={{
         background: "rgba(255,255,255,.94)",
         borderColor: "rgba(33,26,35,.1)",
@@ -1240,8 +1256,8 @@ function NavPanel({
         {active.time}
       </p>
       <dl className="mt-2 grid grid-cols-[4.2rem_1fr] gap-x-2 gap-y-0.5 text-[11.5px]" style={{ color: "#5c5160" }}>
-        <dt className="font-bold" style={{ color: INK }}>{room.peopleLabel ?? "Speaker"}</dt>
-        <dd>{active.speaker ?? "To be confirmed"}</dd>
+        <dt className="font-bold" style={{ color: INK }}>{peopleHeading(room, active.speakers)}</dt>
+        <dd><PeopleList names={active.speakers} /></dd>
         <dt className="font-bold" style={{ color: INK }}>Where</dt>
         <dd>{place}</dd>
         {next && (
@@ -1517,8 +1533,8 @@ export default function IsoRoom({
                 <dl className="mt-4 grid grid-cols-[84px_1fr] gap-x-3 gap-y-3 text-[14px]" style={{ color: "#5c5160" }}>
                   <dt className="font-bold" style={{ color: INK }}>Timing</dt>
                   <dd className="font-bold tabular-nums" style={{ color: PINK }}>{active.time}</dd>
-                  <dt className="font-bold" style={{ color: INK }}>{room.peopleLabel ?? "Speaker"}</dt>
-                  <dd>{active.speaker ?? "To be confirmed"}</dd>
+                  <dt className="font-bold" style={{ color: INK }}>{peopleHeading(room, active.speakers)}</dt>
+                  <dd><PeopleList names={active.speakers} /></dd>
                   <dt className="font-bold" style={{ color: INK }}>Location</dt>
                   <dd>{place}</dd>
                   <dt className="font-bold" style={{ color: INK }}>About</dt>
