@@ -8,7 +8,7 @@ import { STOPS, goToStop, stopIndexForFocus } from "@/lib/stops";
  * Floating "Previous room / Next room" buttons on the right edge. They walk the
  * fixed loop in lib/stops.ts and hide at either end of it.
  */
-export default function StopNav() {
+export default function StopNav({ docked = false }: { docked?: boolean }) {
   const [index, setIndex] = useState(() => stopIndexForFocus(journey.focus));
 
   useEffect(() => {
@@ -25,11 +25,15 @@ export default function StopNav() {
   return (
     <div
       // Phones: a slim row in the free band under the room. Larger screens:
-      // a column floating on the right edge, mid-height.
-      className="pointer-events-none fixed top-[69%] flex flex-row-reverse items-center gap-2 sm:top-1/2 sm:flex-col sm:items-end sm:gap-2.5"
+      // a column floating on the right edge, mid-height — or, when `docked`,
+      // a normal row that sits inside its parent (above the room's info panel).
+      className={
+        docked
+          ? "pointer-events-none fixed top-[69%] -translate-y-1/2 flex flex-row-reverse items-center gap-2 sm:static sm:w-full sm:translate-y-0 sm:justify-between"
+          : "pointer-events-none fixed top-[69%] -translate-y-1/2 flex flex-row-reverse items-center gap-2 sm:top-1/2 sm:flex-col sm:items-end sm:gap-2.5"
+      }
       style={{
         right: "max(0.75rem, env(safe-area-inset-right))",
-        transform: "translateY(-50%)",
         zIndex: 31,
       }}
     >
@@ -38,8 +42,8 @@ export default function StopNav() {
           type="button"
           onClick={() => goToStop(index + 1)}
           aria-label={`Next room: ${next.label}`}
-          className="pointer-events-auto rounded-2xl px-3 py-2 text-left shadow-lg sm:px-3.5 sm:py-2.5"
-          style={{ background: "#211A23", color: "#fff", maxWidth: "11.5rem" }}
+          className={`pointer-events-auto rounded-2xl px-3 py-2 text-left shadow-lg sm:px-3.5 sm:py-2.5${docked ? " sm:flex-1" : ""}`}
+          style={{ background: "#211A23", color: "#fff", maxWidth: docked ? undefined : "11.5rem" }}
         >
           <span className="block text-[10px] font-bold uppercase tracking-[0.16em]" style={{ color: "#F4A3C1" }}>
             Next room ›
@@ -52,12 +56,12 @@ export default function StopNav() {
           type="button"
           onClick={() => goToStop(index - 1)}
           aria-label={`Previous room: ${prev.label}`}
-          className="pointer-events-auto rounded-2xl border px-3 py-2 text-left shadow-lg sm:px-3.5 sm:py-2.5"
+          className={`pointer-events-auto rounded-2xl border px-3 py-2 text-left shadow-lg sm:px-3.5 sm:py-2.5${docked ? " sm:flex-1" : ""}`}
           style={{
             background: "rgba(255,255,255,.96)",
             borderColor: "rgba(33,26,35,.15)",
             color: "#211A23",
-            maxWidth: "11.5rem",
+            maxWidth: docked ? undefined : "11.5rem",
           }}
         >
           <span className="block text-[10px] font-bold uppercase tracking-[0.16em]" style={{ color: "#B0124F" }}>

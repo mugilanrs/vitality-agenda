@@ -1004,7 +1004,7 @@ function NavPanel({
   const go = (i: number) => setActiveSession(sessions[(i + sessions.length) % sessions.length].id);
   return (
     <div
-      className="pointer-events-auto absolute bottom-5 right-5 w-[min(340px,calc(100vw-2.5rem))] rounded-[18px] border p-3.5"
+      className="pointer-events-auto w-full rounded-[18px] border p-3.5"
       style={{
         background: "rgba(255,255,255,.94)",
         borderColor: "rgba(33,26,35,.1)",
@@ -1469,8 +1469,10 @@ export default function IsoRoom({
         )}
       </div>
 
-      <NavPanel room={room} activeIndex={activeIndex} place={place} />
-      <StopNav />
+      <div className="pointer-events-none absolute bottom-5 right-5 flex w-[min(340px,calc(100vw-2.5rem))] flex-col items-end gap-3">
+        <StopNav docked />
+        <NavPanel room={room} activeIndex={activeIndex} place={place} />
+      </div>
     </div>
   );
 }
