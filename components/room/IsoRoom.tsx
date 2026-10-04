@@ -12,9 +12,9 @@ const Dy = 0.5 * S;
 const Uy = -S;
 
 const WALL = "#F0E8EB";
-const WALL_2 = "#E1D5DA";
+const WALL_2 = "#DADADF";
 const FLOOR = "#DDD6D8";
-const RUG = "#ECE4E7";
+const RUG = "#F1F1F3";
 const WOOD = "#75636A";
 const WOOD_LT = "#9B898F";
 const GLASS = "#D7E0DD";
@@ -131,38 +131,52 @@ function Shell({
   const outerN = [wp(-fa - T, -fb - T, 0), wp(fa, -fb - T, 0), wp(fa, -fb - T, wh), wp(-fa - T, -fb - T, wh)];
   const outerW = [wp(-fa - T, -fb - T, 0), wp(-fa - T, fb, 0), wp(-fa - T, fb, wh), wp(-fa - T, -fb - T, wh)];
   const sh = wp(0, 0, -SL);
+  // Boardrooms are neutral white; the dining room keeps its warm blush tones.
+  const pal = dining
+    ? {
+        wallN0: "#F6EEF1", wallN1: "#E6D8DE", wallW0: "#E9DCE1", wallW1: "#D5C5CC",
+        floor0: "#E6DEE1", floor1: "#D2C8CC", shadow: "rgba(90,50,70,.22)",
+        slabE: "#8E7A83", slabS: "#A8949D", outerN: "#CDBCC4", outerW: "#BBA9B1",
+        capN: "#FBF6F8", capW: "#F1E7EB", baseN: "#C9B8C0", baseW: "#B9A7AF", grid: "#C9BCC2",
+      }
+    : {
+        wallN0: "#FFFFFF", wallN1: "#F1F1F3", wallW0: "#F6F6F8", wallW1: "#E5E5E8",
+        floor0: "#FCFCFC", floor1: "#EBEBED", shadow: "rgba(60,45,60,.18)",
+        slabE: "#B8B8BD", slabS: "#CFCFD4", outerN: "#EAEAED", outerW: "#DBDBDF",
+        capN: "#FFFFFF", capW: "#F6F6F8", baseN: "#DDDDE1", baseW: "#CECED3", grid: "#D8D8DC",
+      };
   return (
     <g>
       <defs>
         <linearGradient id="wallN" x1="0" y1="0" x2="0" y2="1">
-          <stop offset="0" stopColor="#F6EEF1" />
-          <stop offset="1" stopColor="#E6D8DE" />
+          <stop offset="0" stopColor={pal.wallN0} />
+          <stop offset="1" stopColor={pal.wallN1} />
         </linearGradient>
         <linearGradient id="wallW" x1="0" y1="0" x2="0" y2="1">
-          <stop offset="0" stopColor="#E9DCE1" />
-          <stop offset="1" stopColor="#D5C5CC" />
+          <stop offset="0" stopColor={pal.wallW0} />
+          <stop offset="1" stopColor={pal.wallW1} />
         </linearGradient>
         <linearGradient id="floorG" x1="0" y1="0" x2="1" y2="1">
-          <stop offset="0" stopColor="#E6DEE1" />
-          <stop offset="1" stopColor="#D2C8CC" />
+          <stop offset="0" stopColor={pal.floor0} />
+          <stop offset="1" stopColor={pal.floor1} />
         </linearGradient>
       </defs>
-      <ellipse cx={sh[0]} cy={sh[1] + 40} rx={fa * 52} ry={fb * 22} fill="rgba(90,50,70,.22)" style={{ filter: "blur(14px)" }} />
-      <polygon points={pts(slabE)} fill="#8E7A83" />
-      <polygon points={pts(slabS)} fill="#A8949D" />
-      <polygon points={pts(outerN)} fill="#CDBCC4" />
-      <polygon points={pts(outerW)} fill="#BBA9B1" />
+      <ellipse cx={sh[0]} cy={sh[1] + 40} rx={fa * 52} ry={fb * 22} fill={pal.shadow} style={{ filter: "blur(14px)" }} />
+      <polygon points={pts(slabE)} fill={pal.slabE} />
+      <polygon points={pts(slabS)} fill={pal.slabS} />
+      <polygon points={pts(outerN)} fill={pal.outerN} />
+      <polygon points={pts(outerW)} fill={pal.outerW} />
       <polygon points={pts(north)} fill={dining ? "#E7DFE2" : "url(#wallN)"} />
       <polygon points={pts(west)} fill="url(#wallW)" />
-      <polygon points={pts(capN)} fill="#FBF6F8" />
-      <polygon points={pts(capW)} fill="#F1E7EB" />
+      <polygon points={pts(capN)} fill={pal.capN} />
+      <polygon points={pts(capW)} fill={pal.capW} />
       <polygon points={pts(floor)} fill="url(#floorG)" />
-      <polygon points={pts([wp(-fa, -fb, 0), wp(fa, -fb, 0), wp(fa, -fb, 0.22), wp(-fa, -fb, 0.22)])} fill="#C9B8C0" />
-      <polygon points={pts([wp(-fa, -fb, 0), wp(-fa, fb, 0), wp(-fa, fb, 0.22), wp(-fa, -fb, 0.22)])} fill="#B9A7AF" />
+      <polygon points={pts([wp(-fa, -fb, 0), wp(fa, -fb, 0), wp(fa, -fb, 0.22), wp(-fa, -fb, 0.22)])} fill={pal.baseN} />
+      <polygon points={pts([wp(-fa, -fb, 0), wp(-fa, fb, 0), wp(-fa, fb, 0.22), wp(-fa, -fb, 0.22)])} fill={pal.baseW} />
       <polygon points={pts([wp(-fa, -fb, 0), wp(fa, -fb, 0), wp(fa, -fb + 1.6, 0), wp(-fa, -fb + 1.6, 0)])} fill="rgba(60,30,50,.07)" />
       <polygon points={pts([wp(-fa, -fb, 0), wp(-fa + 1.6, -fb, 0), wp(-fa + 1.6, fb, 0), wp(-fa, fb, 0)])} fill="rgba(60,30,50,.09)" />
       {grids.map((g, i) => (
-        <polyline key={i} points={pts(g)} fill="none" stroke="#C9BCC2" strokeWidth={1} opacity={0.45} />
+        <polyline key={i} points={pts(g)} fill="none" stroke={pal.grid} strokeWidth={1} opacity={0.45} />
       ))}
       <polygon points={pts(rug)} fill={RUG} opacity={0.9} />
     </g>
@@ -584,35 +598,23 @@ function DiningRoom({ fa, fb, wh }: { fa: number; fb: number; wh: number }) {
   );
 }
 
-const PROP_INK: Record<SessionProp, string> = {
-  reception: PINK,
-  horizon: PINK,
-  ideation: GREEN,
-  sprint: WOOD,
-  aishield: WOOD_LT,
-  cloche: PINK,
-  maturityloop: INK,
-  autonomy: WOOD,
-  runcycle: WOOD,
-  hexcloud: "#8AA0A4",
-  casefiles: GREEN,
-  contextstack: INK,
+/** Solid badge colour behind each prop glyph (white glyph on top). */
+const PROP_SOLID: Record<SessionProp, string> = {
+  reception: "#C2185B",
+  horizon: "#6D4AE0",
+  ideation: "#2E7D32",
+  sprint: "#E65100",
+  aishield: "#00796B",
+  cloche: "#7B1FA2",
+  maturityloop: "#283593",
+  autonomy: "#C62828",
+  runcycle: "#1565C0",
+  hexcloud: "#455A64",
+  casefiles: "#6D4C41",
+  contextstack: "#1B1B2F",
 };
 
-const PROP_BG: Record<SessionProp, string> = {
-  reception: "rgba(229,143,165,.18)",
-  horizon: "rgba(229,143,165,.18)",
-  ideation: "rgba(117,157,120,.18)",
-  sprint: "rgba(117,99,106,.18)",
-  aishield: "rgba(155,137,143,.18)",
-  cloche: "rgba(229,143,165,.18)",
-  maturityloop: "rgba(33,26,35,.12)",
-  autonomy: "rgba(117,99,106,.18)",
-  runcycle: "rgba(117,99,106,.18)",
-  hexcloud: "rgba(138,160,164,.18)",
-  casefiles: "rgba(117,157,120,.18)",
-  contextstack: "rgba(33,26,35,.12)",
-};
+const ACCENT = "#FFD54F";
 
 function hexPts(cx: number, cy: number, r: number) {
   return Array.from({ length: 6 }, (_, k) => {
@@ -622,38 +624,30 @@ function hexPts(cx: number, cy: number, r: number) {
 }
 
 function PropGlyph({ type }: { type: SessionProp }) {
-  const c = PROP_INK[type];
+  // Glyphs are drawn white on a solid badge. Inside this function PAPER/INK are
+  // the badge colour (cut-outs) and PINK is the accent highlight.
+  const c = "#FFFFFF";
+  const PAPER = PROP_SOLID[type];
+  const PINK = ACCENT;
   switch (type) {
     case "reception":
-      // Champagne toast — two flutes clinking, spark and bubbles.
+      // Professional greeting: a handshake between two sleeved forearms.
       return (
-        <g>
-          {[-1, 1].map((s) => (
-            <g key={s} transform={`translate(${s * 8} 4) rotate(${s * 20})`}>
-              <path d="M-5 -14 H5 L3 5 Q0 8 -3 5 Z" fill={c} opacity={0.9} />
-              <line x1={0} y1={7} x2={0} y2={15} stroke={c} strokeWidth={2} />
-              <line x1={-5} y1={15} x2={5} y2={15} stroke={c} strokeWidth={2.5} strokeLinecap="round" />
-            </g>
-          ))}
-          <g stroke={c} strokeWidth={2} strokeLinecap="round">
-            <line x1={0} y1={-20} x2={0} y2={-13} />
-            <line x1={-6} y1={-17} x2={-3} y2={-14} />
-            <line x1={6} y1={-17} x2={3} y2={-14} />
+        <g strokeLinejoin="round" strokeLinecap="round">
+          <polygon points="-25,-6 -17,-9 -12,11 -20,14" fill={c} opacity={0.55} />
+          <polygon points="25,-6 17,-9 12,11 20,14" fill={c} />
+          <path d="M-15 -6 L-5 -11 L3 -8 L10 -9 L16 -4 L15 5 L7 12 L-3 13 L-12 7 Z" fill={c} />
+          <path d="M-5 -11 L-1 -3 L7 -4" fill="none" stroke={PAPER} strokeWidth={2} />
+          <g fill="none" stroke={PAPER} strokeWidth={2}>
+            <path d="M3 0 L9 6" />
+            <path d="M-1 4 L5 10" />
+            <path d="M-5 7 L0 12" />
           </g>
-          <circle cx={-3} cy={-8} r={1.6} fill={PAPER} />
-          <circle cx={4} cy={-5} r={1.2} fill={PAPER} />
-          <circle cx={1} cy={-1} r={1.4} fill={PAPER} />
         </g>
       );
     case "horizon":
-      // Eye whose pupil is a compass star, with a horizon line.
-      return (
-        <g>
-          <ellipse cx={0} cy={0} rx={22} ry={13} fill={PAPER} stroke={c} strokeWidth={3} />
-          <path d="M0 -9 L2.4 -2.4 L9 0 L2.4 2.4 L0 9 L-2.4 2.4 L-9 0 L-2.4 -2.4 Z" fill={c} />
-          <line x1={-24} y1={19} x2={24} y2={19} stroke={c} strokeWidth={2} strokeDasharray="4 3" strokeLinecap="round" />
-        </g>
-      );
+      // Drawn by <VisionProp /> (eye above five rotating pillars).
+      return null;
     case "ideation":
       // Lightbulb whose base becomes an isometric cube.
       return (
@@ -687,8 +681,8 @@ function PropGlyph({ type }: { type: SessionProp }) {
           </g>
           <circle cx={-8} cy={-4} r={2} fill={PAPER} />
           <circle cx={8} cy={-8} r={2} fill={PAPER} />
-          <circle cx={12} cy={12} r={6} fill={PAPER} stroke={INK} strokeWidth={2.5} />
-          <line x1={16.5} y1={16.5} x2={22} y2={22} stroke={INK} strokeWidth={3} strokeLinecap="round" />
+          <circle cx={12} cy={12} r={6} fill={PINK} stroke={PAPER} strokeWidth={2.5} />
+          <line x1={16.5} y1={16.5} x2={22} y2={22} stroke={c} strokeWidth={3} strokeLinecap="round" />
         </g>
       );
     case "cloche":
@@ -821,6 +815,86 @@ const PROP_LABELS: Record<SessionProp, string> = {
   contextstack: "Context",
 };
 
+const PILLARS: { x: number; z: number; h: number }[] = [
+  { x: -11, z: -11, h: 17 },
+  { x: 11, z: -11, h: 21 },
+  { x: -11, z: 11, h: 19 },
+  { x: 11, z: 11, h: 15 },
+  { x: 0, z: 0, h: 30 },
+];
+
+/** An eye above five square pillars (one in the centre) that rotate. */
+function VisionProp({ active }: { active: boolean }) {
+  const [ang, setAng] = useState(0.6);
+  useEffect(() => {
+    if (window.matchMedia?.("(prefers-reduced-motion: reduce)").matches) return;
+    let raf = 0;
+    let last = performance.now();
+    const tick = (t: number) => {
+      setAng((a) => a + (t - last) * 0.0006);
+      last = t;
+      raf = requestAnimationFrame(tick);
+    };
+    raf = requestAnimationFrame(tick);
+    return () => cancelAnimationFrame(raf);
+  }, []);
+
+  const base = PROP_SOLID.horizon;
+  const cos = Math.cos(ang);
+  const sin = Math.sin(ang);
+  const proj = (x: number, z: number, h: number): P => [(x - z) * 0.87, (x + z) * 0.5 - h];
+  const half = 5.5;
+  const corners: [number, number][] = [[-half, -half], [half, -half], [half, half], [-half, half]];
+
+  const placed = PILLARS.map((pl) => {
+    const cx = pl.x * cos - pl.z * sin;
+    const cz = pl.x * sin + pl.z * cos;
+    return { ...pl, cx, cz };
+  }).sort((p1, p2) => p1.cx + p1.cz - (p2.cx + p2.cz));
+
+  return (
+    <g transform="translate(0 26) scale(1.55)" style={{ filter: "drop-shadow(0 3px 4px rgba(33,26,35,.35))" }}>
+      {placed.map((pl, k) => {
+        const g = corners.map(([lx, lz]) => [
+          pl.cx + lx * cos - lz * sin,
+          pl.cz + lx * sin + lz * cos,
+        ] as [number, number]);
+        const faces = g
+          .map((pt, i) => {
+            const n = g[(i + 1) % 4];
+            const mx = (pt[0] + n[0]) / 2 - pl.cx;
+            const mz = (pt[1] + n[1]) / 2 - pl.cz;
+            return { i, n, mx, mz, vis: mx + mz > 0 };
+          })
+          .filter((f) => f.vis);
+        return (
+          <g key={k} stroke="rgba(255,255,255,.45)" strokeWidth={0.8} strokeLinejoin="round">
+            {faces.map((f) => (
+              <polygon
+                key={f.i}
+                points={pts([
+                  proj(g[f.i][0], g[f.i][1], 0),
+                  proj(f.n[0], f.n[1], 0),
+                  proj(f.n[0], f.n[1], pl.h),
+                  proj(g[f.i][0], g[f.i][1], pl.h),
+                ])}
+                fill={shade(base, f.mx > f.mz ? 0.95 : 0.7)}
+              />
+            ))}
+            <polygon points={pts(g.map(([x, z]) => proj(x, z, pl.h)))} fill={shade(base, 1.22)} />
+          </g>
+        );
+      })}
+      <g transform="translate(0 -42)">
+        {active && <circle r={17} fill="none" stroke={PINK} strokeWidth={3} opacity={0.9} />}
+        <circle r={13} fill="#FFFFFF" stroke={INK} strokeWidth={3.5} />
+        <path d="M-7 0 C-4 -5 4 -5 7 0 C4 5 -4 5 -7 0 Z" fill="none" stroke={INK} strokeWidth={1.8} />
+        <circle r={2.2} fill={INK} />
+      </g>
+    </g>
+  );
+}
+
 const RAIL_ICONS = [
   {
     id: "calendar",
@@ -839,16 +913,16 @@ const RAIL_ICONS = [
 ] as const;
 
 const ANIM_PROFILES = [
-  { floatAmp: 11, floatDur: 4.2, rotStyle: "spin",   rotDur: 18 },
+  { floatAmp: 11, floatDur: 4.2, rotStyle: "tilt",   rotDur: 18 },
   { floatAmp: 14, floatDur: 5.1, rotStyle: "wobble", rotDur: 6  },
   { floatAmp: 9,  floatDur: 3.8, rotStyle: "tilt",   rotDur: 7  },
-  { floatAmp: 13, floatDur: 4.8, rotStyle: "spin",   rotDur: 22 },
+  { floatAmp: 13, floatDur: 4.8, rotStyle: "tilt",   rotDur: 22 },
   { floatAmp: 10, floatDur: 5.6, rotStyle: "wobble", rotDur: 5  },
   { floatAmp: 15, floatDur: 4.0, rotStyle: "tilt",   rotDur: 8  },
-  { floatAmp: 12, floatDur: 5.3, rotStyle: "spin",   rotDur: 15 },
+  { floatAmp: 12, floatDur: 5.3, rotStyle: "tilt",   rotDur: 15 },
   { floatAmp: 8,  floatDur: 4.5, rotStyle: "wobble", rotDur: 7  },
   { floatAmp: 11, floatDur: 3.6, rotStyle: "tilt",   rotDur: 9  },
-  { floatAmp: 14, floatDur: 5.0, rotStyle: "spin",   rotDur: 20 },
+  { floatAmp: 14, floatDur: 5.0, rotStyle: "tilt",   rotDur: 20 },
   { floatAmp: 10, floatDur: 4.3, rotStyle: "wobble", rotDur: 6  },
 ] as const;
 
@@ -865,30 +939,130 @@ function buildPropStyles(count: number) {
   0%, 100% { transform: scale(1); opacity: .9; }
   50% { transform: scale(${(1 - p.floatAmp * 0.012).toFixed(2)}); opacity: .45; }
 }`;
-    if (p.rotStyle === "spin") {
-      css += `
-@keyframes propRot${i} { to { transform: rotate(360deg); } }`;
-    } else if (p.rotStyle === "wobble") {
+    if (p.rotStyle === "wobble") {
       css += `
 @keyframes propRot${i} {
-  0%, 100% { transform: rotate(-18deg); }
-  50% { transform: rotate(18deg); }
+  0%, 100% { transform: rotate(-9deg); }
+  50% { transform: rotate(9deg); }
 }`;
     } else {
       css += `
 @keyframes propRot${i} {
-  0%, 100% { transform: rotate(-12deg) skewY(-4deg); }
-  50% { transform: rotate(12deg) skewY(4deg); }
+  0%, 100% { transform: rotate(-7deg) skewY(-2deg); }
+  50% { transform: rotate(7deg) skewY(2deg); }
 }`;
     }
     css += `
 .iso-room .prop-body-${i} { animation: propFloat${i} ${p.floatDur}s ease-in-out infinite; }
 .iso-room .prop-shadow-${i} { animation: propShadow${i} ${p.floatDur}s ease-in-out infinite; transform-box: fill-box; transform-origin: center; }
-.iso-room .prop-rot-${i} { transform-box: fill-box; transform-origin: center; animation: propRot${i} ${p.rotDur}s ${p.rotStyle === "spin" ? "linear" : "ease-in-out"} infinite; }
+.iso-room .prop-rot-${i} { transform-box: fill-box; transform-origin: center; animation: propRot${i} ${p.rotDur}s ease-in-out infinite; }
 .iso-room .prop-hit.active .prop-rot-${i} { animation-duration: ${Math.max(3, p.rotDur * 0.6)}s; }
 `;
   }
   return css;
+}
+
+function startTime(time: string) {
+  return time.split("—")[0]?.trim() ?? time;
+}
+
+/** Bottom-right: what you are looking at now, plus where to go next. */
+function NavPanel({
+  room,
+  activeIndex,
+  place,
+}: {
+  room: AgendaRoom;
+  activeIndex: number;
+  place: string;
+}) {
+  const sessions = room.sessions;
+  const active = sessions[activeIndex];
+  if (!active) return null;
+  const next = sessions[activeIndex + 1];
+  const go = (i: number) => setActiveSession(sessions[(i + sessions.length) % sessions.length].id);
+  return (
+    <div
+      className="pointer-events-auto absolute bottom-5 right-5 w-[min(340px,calc(100vw-2.5rem))] rounded-[18px] border p-3.5"
+      style={{
+        background: "rgba(255,255,255,.94)",
+        borderColor: "rgba(33,26,35,.1)",
+        boxShadow: "0 14px 34px rgba(90,40,70,.18)",
+        color: INK,
+      }}
+    >
+      <p className="text-[10px] font-bold uppercase tracking-[0.18em]" style={{ color: PINK }}>
+        Now · Session {activeIndex + 1} of {sessions.length}
+      </p>
+      <p className="mt-1 text-[14px] font-extrabold leading-tight">{active.title}</p>
+      <p className="mt-0.5 text-[12px] font-bold tabular-nums" style={{ color: PINK }}>
+        {active.time}
+      </p>
+      <dl className="mt-2 grid grid-cols-[4.2rem_1fr] gap-x-2 gap-y-0.5 text-[11.5px]" style={{ color: "#5c5160" }}>
+        <dt className="font-bold" style={{ color: INK }}>Speaker</dt>
+        <dd>{active.speaker ?? "To be confirmed"}</dd>
+        <dt className="font-bold" style={{ color: INK }}>Where</dt>
+        <dd>{place}</dd>
+        {next && (
+          <>
+            <dt className="font-bold" style={{ color: INK }}>Up next</dt>
+            <dd>{startTime(next.time)} · {next.title}</dd>
+          </>
+        )}
+      </dl>
+      {sessions.length > 1 && (
+        <>
+          <ol className="mt-2.5 hidden max-h-[26vh] flex-col gap-1 overflow-y-auto sm:flex">
+            {sessions.map((s, i) => (
+              <li key={s.id}>
+                <button
+                  type="button"
+                  onClick={() => setActiveSession(s.id)}
+                  className="flex w-full items-center gap-2 rounded-lg px-2 py-1 text-left text-[11.5px]"
+                  style={{
+                    background: i === activeIndex ? "rgba(229,143,165,.2)" : "transparent",
+                    fontWeight: i === activeIndex ? 800 : 600,
+                  }}
+                >
+                  <span
+                    className="inline-flex h-[18px] w-[18px] shrink-0 items-center justify-center rounded-full text-[10px] font-bold"
+                    style={{
+                      background: i === activeIndex ? PINK : "rgba(33,26,35,.08)",
+                      color: i === activeIndex ? "#fff" : INK,
+                    }}
+                  >
+                    {i + 1}
+                  </span>
+                  <span className="w-[4.6rem] shrink-0 tabular-nums" style={{ color: "#5c5160" }}>
+                    {startTime(s.time)}
+                  </span>
+                  <span className="truncate">{s.title}</span>
+                </button>
+              </li>
+            ))}
+          </ol>
+          <div className="mt-2.5 flex items-center justify-between gap-2">
+            <button
+              type="button"
+              className="rounded-full border px-3 py-1 text-xs font-bold"
+              style={{ borderColor: "rgba(33,26,35,.15)" }}
+              onClick={() => go(activeIndex - 1)}
+            >
+              ‹ Previous
+            </button>
+            <button
+              type="button"
+              className="rounded-full px-3.5 py-1 text-xs font-bold text-white"
+              style={{ background: INK }}
+              onClick={() => go(activeIndex + 1)}
+            >
+              Next ›
+            </button>
+          </div>
+        </>
+      )}
+    </div>
+  );
 }
 
 export default function IsoRoom({
@@ -1128,7 +1302,6 @@ export default function IsoRoom({
               const num = String(i + 1).padStart(2, "0");
               const label = session.label ?? PROP_LABELS[session.prop] ?? session.prop;
               const sc = isActive ? 1.15 : isHovered ? 1.05 : 1.0;
-              const bg = PROP_BG[session.prop];
               return (
                 <g
                   key={session.id}
@@ -1170,11 +1343,19 @@ export default function IsoRoom({
                   )}
                   <g transform={`translate(${hover[0].toFixed(1)} ${hover[1].toFixed(1)}) scale(${sc})`}>
                     <g className={`prop-body-${i}`}>
-                      <circle cx={0} cy={0} r={28} fill={bg} />
-                      {isActive && <circle cx={0} cy={0} r={28} fill="none" stroke={PROP_INK[session.prop]} strokeWidth={1.5} opacity={0.4} />}
-                      <g className={`prop-rot-${i}`}>
-                        <PropGlyph type={session.prop} />
-                      </g>
+                      {session.prop === "horizon" ? (
+                        <VisionProp active={isActive} />
+                      ) : (
+                        <g style={{ filter: "drop-shadow(0 4px 5px rgba(33,26,35,.35))" }}>
+                          {isActive && (
+                            <circle cx={0} cy={0} r={35} fill="none" stroke={PINK} strokeWidth={3} opacity={0.9} />
+                          )}
+                          <circle cx={0} cy={0} r={29} fill={PROP_SOLID[session.prop]} stroke="#FFFFFF" strokeWidth={3} />
+                          <g className={`prop-rot-${i}`}>
+                            <PropGlyph type={session.prop} />
+                          </g>
+                        </g>
+                      )}
                     </g>
                   </g>
                   <text
@@ -1260,6 +1441,8 @@ export default function IsoRoom({
           </div>
         )}
       </div>
+
+      <NavPanel room={room} activeIndex={activeIndex} place={place} />
     </div>
   );
 }
