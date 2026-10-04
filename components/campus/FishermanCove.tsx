@@ -1,6 +1,7 @@
 "use client";
 
 import { FISHERMAN_COVE_POSITION } from "@/data/externalDestinations";
+import { decal } from "@/lib/decals";
 import {
   M_CONCRETE_LIGHT,
   M_GRASS,
@@ -44,19 +45,19 @@ export default function FishermanCove() {
   return (
     <group position={[x, 0, z]}>
       {/* Lawn — lighter than the campus grounds */}
-      <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, 0.012, 0.2]} material={M_GRASS} receiveShadow>
+      <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, 0.012, 0.2]} material={decal(M_GRASS, 1)} receiveShadow>
         <circleGeometry args={[6.4, 40]} />
       </mesh>
       <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, 0.014, 0.2]}>
         <ringGeometry args={[6.15, 6.4, 40]} />
-        <meshStandardMaterial color={COLORS.grassDeep} roughness={1} />
+        <meshStandardMaterial color={COLORS.grassDeep} roughness={1} polygonOffset polygonOffsetFactor={-2} polygonOffsetUnits={-2} />
       </mesh>
 
       {/* Walkway toward the campus (south, +Z) */}
       <mesh
         rotation={[-Math.PI / 2, 0, 0]}
         position={[0, 0.03, DEPTH / 2 + 1.7]}
-        material={M_CONCRETE_LIGHT}
+        material={decal(M_CONCRETE_LIGHT, 4)}
         receiveShadow
       >
         <planeGeometry args={[1.15, 3.2]} />

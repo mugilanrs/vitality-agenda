@@ -2,6 +2,7 @@
 
 import { useMemo } from "react";
 import * as THREE from "three";
+import { decal } from "@/lib/decals";
 import {
   M_WHITE_SHELL,
   M_ROOF_WHITE,
@@ -62,7 +63,13 @@ export default function CampusPerimeter() {
         position={[0, 0.02, 0]}
       >
         <ringGeometry args={[CAMPUS_RADIUS - 0.05, CAMPUS_RADIUS + 0.02, 128]} />
-        <meshStandardMaterial color={"#f4f0e6"} roughness={0.95} />
+        <meshStandardMaterial
+          color={"#f4f0e6"}
+          roughness={0.95}
+          polygonOffset
+          polygonOffsetFactor={-3}
+          polygonOffsetUnits={-3}
+        />
       </mesh>
 
       {/* Wall segments */}
@@ -187,7 +194,7 @@ function EntranceGate() {
       <mesh
         rotation={[-Math.PI / 2, 0, 0]}
         position={[0, 0.015, 0.2]}
-        material={M_CONCRETE_LIGHT}
+        material={decal(M_CONCRETE_LIGHT, 2)}
       >
         <planeGeometry args={[pierGap + pierWidth * 2 + 0.6, pierDepth + 0.8]} />
       </mesh>

@@ -1,6 +1,7 @@
 "use client";
 
 import { AIRPORT_POSITION } from "@/data/externalDestinations";
+import { decal } from "@/lib/decals";
 import {
   M_CONCRETE_LIGHT,
   M_GRASS,
@@ -48,15 +49,15 @@ export default function AirportDestination() {
 
   return (
     <group position={[x, 0, z]}>
-      <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0.4, 0.02, 0.3]} material={M_GRASS} receiveShadow>
+      <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0.4, 0.02, 0.3]} material={decal(M_GRASS, 1)} receiveShadow>
         <circleGeometry args={[5.1, 36]} />
       </mesh>
 
       {/* Apron */}
       <mesh
         rotation={[-Math.PI / 2, 0, 0]}
-        position={[1.4, 0.03, 0.7]}
-        material={M_CONCRETE_LIGHT}
+        position={[1.4, 0.04, 0.7]}
+        material={decal(M_CONCRETE_LIGHT, 4)}
         receiveShadow
       >
         <planeGeometry args={[length + 2.4, depth + 2.6]} />
@@ -65,8 +66,8 @@ export default function AirportDestination() {
       {/* Access road toward the campus (−Z) */}
       <mesh
         rotation={[-Math.PI / 2, 0, 0]}
-        position={[0, 0.035, -depth / 2 - 2.1]}
-        material={M_CONCRETE_LIGHT}
+        position={[0, 0.05, -depth / 2 - 2.1]}
+        material={decal(M_CONCRETE_LIGHT, 5)}
         receiveShadow
       >
         <planeGeometry args={[1.05, 3.6]} />

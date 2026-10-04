@@ -96,16 +96,16 @@ export default function JourneyRoutes() {
   return (
     <group>
       <mesh geometry={geometry.north} receiveShadow>
-        <meshStandardMaterial color={"#e7d4da"} roughness={1} side={THREE.DoubleSide} />
+        <meshStandardMaterial color={"#e7d4da"} roughness={1} side={THREE.DoubleSide} polygonOffset polygonOffsetFactor={-6} polygonOffsetUnits={-6} />
       </mesh>
       <mesh geometry={geometry.south} receiveShadow>
-        <meshStandardMaterial color={"#e7d4da"} roughness={1} side={THREE.DoubleSide} />
+        <meshStandardMaterial color={"#e7d4da"} roughness={1} side={THREE.DoubleSide} polygonOffset polygonOffsetFactor={-6} polygonOffsetUnits={-6} />
       </mesh>
       <mesh geometry={geometry.northLine} position={[0, 0.015, 0]}>
-        <meshBasicMaterial color={COLORS.blossomPink} transparent opacity={0.85} side={THREE.DoubleSide} />
+        <meshBasicMaterial color={COLORS.blossomPink} transparent opacity={0.85} side={THREE.DoubleSide} polygonOffset polygonOffsetFactor={-8} polygonOffsetUnits={-8} />
       </mesh>
       <mesh geometry={geometry.southLine} position={[0, 0.015, 0]}>
-        <meshBasicMaterial color={COLORS.blossomPink} transparent opacity={0.85} side={THREE.DoubleSide} />
+        <meshBasicMaterial color={COLORS.blossomPink} transparent opacity={0.85} side={THREE.DoubleSide} polygonOffset polygonOffsetFactor={-8} polygonOffsetUnits={-8} />
       </mesh>
     </group>
   );
