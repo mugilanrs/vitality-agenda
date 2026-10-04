@@ -5,31 +5,32 @@ import gsap from "gsap";
 import { setWelcome, journey } from "@/lib/journey";
 
 /**
- * Pink / dark themed cloud intro — the opening screen from the legacy site,
- * ported into R3F chrome. Palette, typography and copy follow the current
- * theme; the cloud dispersal animation is kept from the vital-visit WelcomeIntro.
+ * Opening screen: a blurred, warm-graded campus photo with a sharp window onto
+ * the campus in the middle, pink glowing screen edges, and a frosted glass card
+ * carrying the welcome copy.
  *
- * - Eyebrow: "A DAY ACROSS THE TCS SIRUSERI" in pink
- * - Title: "Welcome to TCS" in Bricolage Grotesque, 800
- * - "Tap to continue" with pulsing pink dot
- * - Click anywhere → clouds fan outward, the campus fades in
+ * The photo is /public/welcome/campus.png — replace that single file with the
+ * real TCS campus photo (a wide shot at least 1600px; the same file is used
+ * for phones and desktops). Nothing else needs to change.
+ *
+ * Tap anywhere → the card slips away, the sharp window opens out to fill the
+ * screen and the whole screen dissolves into the 3D map.
  */
+const PHOTO = "url(/welcome/campus.png)";
+const WARM = "sepia(.55) saturate(1.8) hue-rotate(-12deg) contrast(1.12)";
+
 export default function WelcomeIntro() {
   const [dismissed, setDismissed] = useState(false);
   const [gone, setGone] = useState(false);
   const rootRef = useRef<HTMLDivElement | null>(null);
-  const titleRef = useRef<HTMLDivElement | null>(null);
-  const cloudRefs = useRef<(HTMLDivElement | null)[]>([]);
-
-  const setCloud = (i: number) => (el: HTMLDivElement | null) => {
-    cloudRefs.current[i] = el;
-  };
+  const cardRef = useRef<HTMLDivElement | null>(null);
+  const sharpRef = useRef<HTMLDivElement | null>(null);
+  const edgeRef = useRef<HTMLDivElement | null>(null);
 
   const dismiss = () => {
     if (dismissed) return;
     setDismissed(true);
 
-    const reduce = journey.reducedMotion;
     const tl = gsap.timeline({
       onComplete: () => {
         setWelcome(false);
@@ -37,38 +38,24 @@ export default function WelcomeIntro() {
       },
     });
 
-    if (reduce) {
+    if (journey.reducedMotion) {
       tl.to(rootRef.current, { opacity: 0, duration: 0.4, ease: "power1.out" });
       return;
     }
 
     tl.to(
-      titleRef.current,
-      { y: -40, opacity: 0, scale: 0.96, duration: 0.55, ease: "power2.in" },
+      cardRef.current,
+      { y: 60, opacity: 0, scale: 0.97, duration: 0.5, ease: "power2.in" },
       0,
     );
-
-    cloudRefs.current.forEach((el, i) => {
-      if (!el) return;
-      const dir = CLOUDS[i].fan;
-      const dist = 600 + Math.random() * 200;
-      tl.to(
-        el,
-        {
-          x: `+=${dir.x * dist}`,
-          y: `+=${dir.y * dist}`,
-          scale: 1.6 + i * 0.05,
-          opacity: 0,
-          rotation: dir.x > 0 ? 6 : -6,
-          filter: "blur(48px)",
-          duration: 1.4,
-          ease: "power2.inOut",
-        },
-        0.12 + i * 0.05,
-      );
-    });
-
-    tl.to(rootRef.current, { opacity: 0, duration: 0.8, ease: "power1.out" }, 0.9);
+    // Open the sharp window until it covers the screen.
+    tl.to(
+      sharpRef.current,
+      { "--a": "150%", "--b": "210%", duration: 1.1, ease: "power2.inOut" },
+      0.05,
+    );
+    tl.to(edgeRef.current, { opacity: 0, duration: 0.8, ease: "power1.out" }, 0.1);
+    tl.to(rootRef.current, { opacity: 0, duration: 0.7, ease: "power1.out" }, 0.8);
   };
 
   useEffect(() => {
@@ -77,68 +64,77 @@ export default function WelcomeIntro() {
 
   if (gone) return null;
 
+  const photoLayer: React.CSSProperties = {
+    position: "absolute",
+    inset: "-8%",
+    backgroundImage: PHOTO,
+    backgroundSize: "cover",
+    backgroundPosition: "48% 54%",
+  };
+
   return (
     <div
       ref={rootRef}
       onClick={dismiss}
-      className="fixed inset-0 z-[60] flex cursor-pointer items-center justify-center overflow-hidden"
-      style={{
-        background:
-          "radial-gradient(130% 110% at 50% 34%, var(--world-a), var(--world-b))",
-      }}
+      className="fixed inset-0 z-[60] cursor-pointer overflow-hidden"
+      style={{ background: "linear-gradient(165deg, #F9C9B2, #E8A9C0)" }}
     >
-      {CLOUDS.map((c, i) => (
-        <div
-          key={i}
-          ref={setCloud(i)}
-          aria-hidden
-          className="absolute"
-          style={{
-            top: c.top,
-            left: c.left,
-            right: c.right,
-            bottom: c.bottom,
-            zIndex: c.z,
-            width: c.w,
-            height: c.h,
-            filter: `blur(${c.blur}px)`,
-            willChange: "transform, opacity, filter",
-            pointerEvents: "none",
-          }}
-        >
-          <CloudShape opacity={c.opacity} tone={c.tone} />
-        </div>
-      ))}
+      {/* Blurred, warm-graded photo */}
+      <div style={{ ...photoLayer, filter: `blur(7px) ${WARM}` }} />
 
+      {/* Sharp window onto the campus */}
       <div
-        ref={titleRef}
-        className="relative z-30 flex flex-col items-center px-6 text-center"
+        ref={sharpRef}
+        style={
+          {
+            ...photoLayer,
+            "--a": "38%",
+            "--b": "70%",
+            filter: "saturate(1.35) contrast(1.06)",
+            WebkitMaskImage:
+              "radial-gradient(circle at 50% 54%, #000 0, #000 var(--a), transparent var(--b))",
+            maskImage:
+              "radial-gradient(circle at 50% 54%, #000 0, #000 var(--a), transparent var(--b))",
+          } as React.CSSProperties
+        }
+      />
+
+      {/* Soft pink glow around the screen edges */}
+      <div
+        ref={edgeRef}
+        aria-hidden
+        className="pointer-events-none absolute inset-0"
         style={{
+          boxShadow: "inset 0 0 90px 26px rgba(255,92,165,.3)",
+          background:
+            "radial-gradient(circle at 50% 54%, transparent 42%, rgba(255,120,180,.38) 100%)",
+        }}
+      />
+
+      {/* Frosted glass card with a pink border */}
+      <div
+        ref={cardRef}
+        className="absolute inset-x-[7%] bottom-[6%] mx-auto flex h-[250px] max-w-[520px] flex-col items-center justify-center rounded-[30px] px-6 text-center"
+        style={{
+          background: "rgba(255,236,244,.62)",
+          backdropFilter: "blur(22px)",
+          WebkitBackdropFilter: "blur(22px)",
+          border: "2px solid rgba(255,105,170,.95)",
+          boxShadow:
+            "0 0 0 5px rgba(255,170,205,.35), 0 20px 60px rgba(120,20,80,.35)",
           animation: "welcomeFloat 900ms cubic-bezier(0.22, 1, 0.36, 1)",
         }}
       >
-        {/* The clouds are always white, so the text uses fixed dark colours
-            (not theme tokens, which turn near-white in dark mode) and sits on
-            a soft light scrim so it never gets lost in a gap between clouds. */}
-        <div
-          aria-hidden
-          className="pointer-events-none absolute -inset-x-10 -inset-y-12 -z-10"
-          style={{
-            background:
-              "radial-gradient(closest-side, rgba(255,255,255,.92) 0%, rgba(255,255,255,.78) 55%, rgba(255,255,255,0) 100%)",
-            filter: "blur(6px)",
-          }}
-        />
         <div
           className="text-[12px] font-extrabold uppercase tracking-[0.24em]"
-          style={{ color: "#A3104A" }}
+          style={{ color: "#9E0F48" }}
         >
           A day across the TCS Siruseri
         </div>
         <h1
           className="font-display mt-3 text-5xl font-extrabold md:text-6xl"
           style={{
-            color: "#182033",
+            color: "#16203A",
             lineHeight: 1.02,
             letterSpacing: "-0.02em",
             textWrap: "balance",
@@ -147,9 +143,9 @@ export default function WelcomeIntro() {
           Welcome to TCS
         </h1>
         <div
-          className="mt-6 inline-flex items-center gap-2 text-sm font-semibold"
+          className="mt-5 inline-flex items-center gap-2 text-sm font-semibold"
           style={{
-            color: "#3B3340",
+            color: "#2F2836",
             animation: "tapPulse 1.8s ease-in-out infinite",
           }}
         >
@@ -175,7 +171,7 @@ export default function WelcomeIntro() {
         @keyframes tapPulse {
           0%,
           100% {
-            opacity: 0.45;
+            opacity: 0.55;
           }
           50% {
             opacity: 1;
@@ -185,63 +181,3 @@ export default function WelcomeIntro() {
     </div>
   );
 }
-
-// ---------------- Cloud shape ----------------
-
-function CloudShape({ opacity, tone }: { opacity: number; tone: string }) {
-  const blob = (
-    left: string,
-    top: string,
-    w: string,
-    h: string,
-    o: number,
-  ): React.CSSProperties => ({
-    position: "absolute",
-    left,
-    top,
-    width: w,
-    height: h,
-    background: `radial-gradient(closest-side, ${tone} 0%, ${tone} 45%, rgba(255,255,255,0) 78%)`,
-    opacity: o,
-    borderRadius: "50%",
-  });
-  return (
-    <div style={{ position: "relative", width: "100%", height: "100%", opacity }}>
-      <div style={blob("10%", "20%", "70%", "80%", 1.0)} />
-      <div style={blob("0%", "35%", "55%", "65%", 0.95)} />
-      <div style={blob("40%", "10%", "60%", "70%", 0.9)} />
-      <div style={blob("30%", "40%", "70%", "60%", 0.85)} />
-      <div style={blob("55%", "25%", "45%", "65%", 0.95)} />
-      <div style={blob("20%", "55%", "60%", "45%", 0.9)} />
-    </div>
-  );
-}
-
-// ---------------- Cloud layout ----------------
-
-type CloudSpec = {
-  top?: string;
-  left?: string;
-  right?: string;
-  bottom?: string;
-  w: string;
-  h: string;
-  opacity: number;
-  blur: number;
-  tone: string;
-  z: number;
-  fan: { x: number; y: number };
-};
-
-const CLOUDS: CloudSpec[] = [
-  { top: "-10%", left: "-15%", w: "80vw", h: "70vh", opacity: 0.85, blur: 30, tone: "#ffffff", z: 5, fan: { x: -1, y: -0.6 } },
-  { top: "-8%", right: "-15%", w: "80vw", h: "70vh", opacity: 0.82, blur: 32, tone: "#f5f8fc", z: 6, fan: { x: 1, y: -0.5 } },
-  { top: "10%", left: "-12%", w: "60vw", h: "55vh", opacity: 0.92, blur: 20, tone: "#ffffff", z: 10, fan: { x: -1, y: 0.2 } },
-  { top: "18%", right: "-10%", w: "62vw", h: "58vh", opacity: 0.9, blur: 22, tone: "#fdfefd", z: 11, fan: { x: 1, y: 0.1 } },
-  { bottom: "-5%", left: "5%", w: "60vw", h: "55vh", opacity: 0.88, blur: 24, tone: "#ffffff", z: 9, fan: { x: -0.6, y: 1 } },
-  { bottom: "-8%", right: "0%", w: "60vw", h: "58vh", opacity: 0.9, blur: 24, tone: "#fbfcfe", z: 10, fan: { x: 0.6, y: 1 } },
-  { top: "5%", left: "20%", w: "36vw", h: "35vh", opacity: 0.95, blur: 12, tone: "#ffffff", z: 20, fan: { x: -0.5, y: -1 } },
-  { top: "8%", right: "18%", w: "36vw", h: "35vh", opacity: 0.95, blur: 12, tone: "#ffffff", z: 20, fan: { x: 0.5, y: -1 } },
-  { bottom: "5%", left: "35%", w: "40vw", h: "35vh", opacity: 0.92, blur: 14, tone: "#ffffff", z: 22, fan: { x: 0, y: 1 } },
-  { top: "28%", left: "30%", w: "42vw", h: "35vh", opacity: 0.5, blur: 30, tone: "#ffe0eb", z: 25, fan: { x: 0, y: -0.6 } },
-];
