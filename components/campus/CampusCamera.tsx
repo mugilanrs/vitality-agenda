@@ -9,7 +9,11 @@ import type { OrthographicCamera as ThreeOrthographicCamera } from "three";
 import { CAMPUS_LOCATIONS, N_STOPS } from "@/data/campusLocations";
 import { BUILDINGS } from "@/data/buildings";
 import { journey } from "@/lib/journey";
-import { clampZoom, orthoBoundsForViewport } from "@/lib/cameraConfig";
+import {
+  clampZoom,
+  orthoBoundsForViewport,
+  portraitOverviewBoost,
+} from "@/lib/cameraConfig";
 import type { CameraState } from "@/lib/camera";
 
 /**
@@ -123,8 +127,10 @@ export default function CampusCamera() {
       vPos.copy(vA).lerp(vB, f);
       vTarget.copy(tA).lerp(tB, f);
 
-      const zA = a.zoom ?? 1;
-      const zB = b.zoom ?? 1;
+      // Stop 0 is the overview; only it gets the portrait boost.
+      const boost = portraitOverviewBoost(size.width / size.height);
+      const zA = (a.zoom ?? 1) * (i0 === 0 ? boost : 1);
+      const zB = (b.zoom ?? 1) * (i1 === 0 ? boost : 1);
       zTarget = clampZoom(zA + (zB - zA) * f);
     }
 
@@ -226,8 +232,11 @@ export default function CampusCamera() {
     <OrthographicCamera
       ref={camRef}
       makeDefault
-      near={0.1}
-      far={200}
+      // Negative near is valid for ortho cameras. A tall portrait frustum
+      // reaches ground that is closer to the camera than 0.1 units of depth,
+      // which would clip the ground into a hard edge with blank space below.
+      near={-150}
+      far={250}
       position={[
         CAMPUS_LOCATIONS[0].camera.position[0],
         CAMPUS_LOCATIONS[0].camera.position[1],

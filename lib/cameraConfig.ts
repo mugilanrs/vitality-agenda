@@ -67,6 +67,17 @@ export function orthoBoundsForViewport(aspect: number): OrthoBounds {
   return { left: -halfH, right: halfH, top: halfV, bottom: -halfV };
 }
 
+/**
+ * Extra zoom for the campus overview stop on tall (phone) viewports. The
+ * portrait frustum is tall relative to the campus, so the overview reads small;
+ * scale it up smoothly as the aspect ratio drops below ~0.8. Building and room
+ * stops are not boosted.
+ */
+export function portraitOverviewBoost(aspect: number): number {
+  const t = Math.min(1, Math.max(0, (0.8 - aspect) / 0.3));
+  return 1 + 0.22 * t;
+}
+
 /** True when the viewport is portrait (h > w). */
 export function isPortrait(width: number, height: number): boolean {
   return height > width;

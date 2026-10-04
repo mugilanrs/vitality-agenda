@@ -66,6 +66,12 @@ function useMobile() {
 
 // ---------------- Pill helpers ----------------
 
+/** Screen rects of pills placed this frame, used for collision avoidance. */
+const placedPills = new Map<
+  string,
+  { index: number; x: number; y: number; halfW: number; halfH: number }
+>();
+
 /** Approximate pill half-dimensions for safe-zone clamping. */
 function pillHalfSize(isMobile: boolean, id: string) {
   const halfW = isMobile
@@ -214,6 +220,13 @@ function Marker({
   );
   const projected = useRef(new THREE.Vector3());
 
+  useEffect(() => {
+    const id = building.id;
+    return () => {
+      placedPills.delete(id);
+    };
+  }, [building.id]);
+
   const isTower = building.id === "signature-tower";
 
   // Per-frame projection + viewport safe-zone clamp. drei's <Html center>
@@ -223,18 +236,28 @@ function Marker({
     const wrap = wrapRef.current;
     if (!wrap) return;
     // While hidden the opacity transition handles the fade; skip the maths.
-    if (!reveal) return;
+    if (!reveal) {
+      placedPills.delete(building.id);
+      return;
+    }
 
     projected.current.copy(anchor).project(camera);
     const sx = ((projected.current.x + 1) / 2) * size.width;
     const sy = (1 - (projected.current.y + 1) / 2) * size.height;
 
-    const { halfW, halfH } = pillHalfSize(isMobile, building.id);
+    const fallback = pillHalfSize(isMobile, building.id);
+    // Prefer the real rendered size so long labels (Fisherman Cove) can't
+    // escape the viewport on narrow screens.
+    const measuredW = wrap.offsetWidth / 2;
+    const measuredH = wrap.offsetHeight / 2;
+    const halfW = measuredW > 0 ? measuredW : fallback.halfW;
+    const halfH = measuredH > 0 ? measuredH : fallback.halfH;
     const { dx: prefDx, dy: prefDy } = preferredOffset(building, isMobile);
 
-    // Safe zone — leave room for safe-area insets at the top, agenda cards
-    // at the bottom, and modest side gutters.
-    const safeTop = 56;
+    // Safe zone — leave room for the header block / controls at the top (taller
+    // on phones where the title wraps), agenda cards at the bottom, and
+    // modest side gutters.
+    const safeTop = isMobile ? 156 : 56;
     const safeBottom = size.height - 72;
     const safeLeft = 12 + halfW;
     const safeRight = size.width - 12 - halfW;
@@ -260,6 +283,22 @@ function Marker({
     // Final hard clamp.
     ty = Math.max(safeTop + halfH, Math.min(safeBottom - halfH, ty));
     tx = Math.max(safeLeft, Math.min(safeRight, tx));
+
+    // Pill-to-pill collision: markers are processed in MARKER_BUILDINGS order,
+    // so each pill only yields to the ones already placed this frame. If it
+    // overlaps one, nudge it vertically away from that pill's centre.
+    const GAP = 6;
+    for (const [otherId, o] of placedPills) {
+      if (otherId === building.id || o.index > index) continue;
+      const overlapX = Math.abs(tx - o.x) < halfW + o.halfW + GAP;
+      const overlapY = Math.abs(ty - o.y) < halfH + o.halfH + GAP;
+      if (overlapX && overlapY) {
+        const dir = ty >= o.y ? 1 : -1;
+        ty = o.y + dir * (halfH + o.halfH + GAP);
+      }
+    }
+    ty = Math.max(safeTop + halfH, Math.min(safeBottom - halfH, ty));
+    placedPills.set(building.id, { index, x: tx, y: ty, halfW, halfH });
 
     const finalDx = tx - sx;
     const finalDy = ty - sy;
