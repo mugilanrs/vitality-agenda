@@ -32,13 +32,14 @@ export default function BrandMark() {
       }}
     >
       <div
-        className="text-[11px] font-bold uppercase"
+        className="text-[12px] font-extrabold uppercase"
         style={{
-          color: "var(--pink)",
-          letterSpacing: "0.22em",
+          color: "#4A0F2E",
+          letterSpacing: "0.2em",
+          textShadow: "0 1px 0 rgba(255,255,255,.35)",
         }}
       >
-        Explore · Our Journey
+        Explore · Your Journey
       </div>
       <div
         className="font-display mt-1 text-xl font-extrabold md:text-2xl"
@@ -52,7 +53,7 @@ export default function BrandMark() {
       </div>
       <div
         className="mt-1.5 text-[12px] font-medium"
-        style={{ color: "#5c5160" }}
+        style={{ color: "#2B2230", textShadow: "0 1px 0 rgba(255,255,255,.3)" }}
       >
         A day across the company — six stops, one map.
       </div>

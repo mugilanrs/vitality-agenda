@@ -1,23 +1,13 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import {
-  journey,
-  subscribeJourney,
-  setFocus,
-  openBuilding,
-  enterRoom,
-} from "@/lib/journey";
-import {
-  BUILDINGS,
-  MARKER_BUILDINGS,
-  type BuildingSpec,
-} from "@/data/buildings";
+import { journey, subscribeJourney } from "@/lib/journey";
+import { STOPS, goToStop, stopIndexForFocus } from "@/lib/stops";
 
 /**
  * Legacy-ported side rails:
  *   left  — small round icon buttons that pop a detail card (calendar, phone)
- *   right — "Jump to" list (one row per agenda stop) + an "Options" chip card
+ *   right — one "Navigate" card: every stop in visiting order, with times
  *
  * On desktop both rails are fixed to the viewport mid-height. On tablet /
  * mobile they fold into a slide-up sheet toggled by an "Info & options" pill
@@ -56,41 +46,11 @@ export default function SideRails() {
 
   if (welcome) return null;
   if (focus.level === "inside") return null;
-  if (focus.level === "building" && focus.building === "eb3") return null;
+  // Destination screens (EB3 chooser, Airport, Fisherman Cove) have their own
+  // Previous / Next room buttons, so the rails would only get in the way.
+  if (focus.level === "building") return null;
 
-  // Jump targets follow the marker registry, including the external
-  // journey stops (Airport, Fisherman Cove). Those open as destinations,
-  // not as campus floors.
-  const stops: Array<{
-    key: string;
-    index: number;
-    label: string;
-    sublabel: string;
-    onClick: () => void;
-    active: boolean;
-  }> = MARKER_BUILDINGS.map((id, i) => {
-    const b: BuildingSpec | undefined = BUILDINGS[id];
-    return {
-      key: id,
-      index: i + 1,
-      label: b?.name ?? id,
-      sublabel: b?.subtitle ?? "",
-      onClick: () => {
-        if (b?.directEntry) {
-          setFocus({
-            level: "room",
-            building: b.id,
-            floor: b.floors[0]?.index,
-            roomId: b.floors[0]?.rooms[0]?.id,
-          });
-          window.setTimeout(() => enterRoom(), 700);
-        } else {
-          openBuilding(id);
-        }
-      },
-      active: focus.building === id,
-    };
-  });
+  const currentStop = stopIndexForFocus(focus);
 
   const content = (
     <>
@@ -177,39 +137,23 @@ export default function SideRails() {
         />
       </div>
 
-      {/* ------- Right rail ------- */}
+      {/* ------- Right rail: one navigation card ------- */}
       <div className="rail rail-right pointer-events-none">
         <div className="rail-card">
-          <div className="rail-eyebrow">Jump to</div>
+          <div className="rail-eyebrow">Navigate</div>
           <ul className="rail-jump">
-            {stops.map((s) => (
-              <li key={s.key} aria-current={s.active || undefined}>
-                <button type="button" onClick={s.onClick}>
-                  <span className="rn">
-                    {String(s.index).padStart(2, "0")}
+            {STOPS.map((stop, i) => (
+              <li key={stop.key} aria-current={i === currentStop || undefined}>
+                <button type="button" onClick={() => goToStop(i)}>
+                  <span className="rn">{String(i + 1).padStart(2, "0")}</span>
+                  <span className="rtxt">
+                    <span className="rnm">{stop.label}</span>
+                    {stop.meta && <span className="rmeta">{stop.meta}</span>}
                   </span>
-                  <span className="rnm">{s.label}</span>
                 </button>
               </li>
             ))}
           </ul>
-        </div>
-        <div className="rail-card">
-          <div className="rail-eyebrow">Options</div>
-          <div className="rail-chips">
-            <button type="button" className="rail-chip">
-              Register
-            </button>
-            <button type="button" className="rail-chip">
-              Directions
-            </button>
-            <button type="button" className="rail-chip">
-              Agenda PDF
-            </button>
-            <button type="button" className="rail-chip">
-              Add to calendar
-            </button>
-          </div>
         </div>
       </div>
     </>
@@ -218,7 +162,7 @@ export default function SideRails() {
   const sheetContent = (
     <>
       <div className="sheet-head">
-        <b>Info &amp; options</b>
+        <b>Info &amp; navigation</b>
         <button
           type="button"
           className="sheet-close"
@@ -243,7 +187,7 @@ export default function SideRails() {
             className="menu-btn"
             onClick={() => setSheetOpen((x) => !x)}
           >
-            Info &amp; options
+            Info &amp; navigation
           </button>
           {sheetOpen && (
             <div
@@ -317,7 +261,7 @@ const railStyles = `
     pointer-events: none;
   }
   .rail-left { left: 22px; }
-  .rail-right { right: 22px; }
+  .rail-right { right: 22px; width: 262px; }
   .rail-card {
     pointer-events: auto;
     background: var(--card);
@@ -404,9 +348,20 @@ const railStyles = `
     font-size: 11px;
     color: var(--muted);
   }
+  .rail-jump .rtxt {
+    display: flex;
+    flex-direction: column;
+    gap: 1px;
+    min-width: 0;
+  }
   .rail-jump .rnm {
-    font-weight: 600;
+    font-weight: 700;
     font-size: 13px;
+  }
+  .rail-jump .rmeta {
+    font-size: 11px;
+    font-weight: 500;
+    color: var(--muted);
   }
   .rail-chips {
     display: flex;

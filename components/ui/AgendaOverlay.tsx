@@ -17,6 +17,7 @@ import {
   setActiveSession,
 } from "@/lib/journey";
 import IsoRoom from "@/components/room/IsoRoom";
+import StopNav from "@/components/ui/StopNav";
 
 /**
  * Agenda overlay — ported to the legacy site's pink callout language.
@@ -87,6 +88,7 @@ export default function AgendaOverlay() {
 
   return (
     <div className="pointer-events-none fixed inset-0 z-30">
+      {focus.level === "building" && building?.external && <StopNav />}
       <div
         className="pointer-events-none absolute inset-x-0 flex justify-center"
         style={{

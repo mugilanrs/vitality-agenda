@@ -232,11 +232,13 @@ export default function CampusCamera() {
     <OrthographicCamera
       ref={camRef}
       makeDefault
-      // Negative near is valid for ortho cameras. A tall portrait frustum
-      // reaches ground that is closer to the camera than 0.1 units of depth,
-      // which would clip the ground into a hard edge with blank space below.
-      near={-150}
-      far={250}
+      // Negative near is valid for ortho cameras: a tall portrait frustum
+      // reaches ground closer than 0.1 units, which would clip a hard edge.
+      // Keep the range as tight as the scene allows — a wider range costs
+      // depth precision, and coplanar layers (lawns, kerbs) z-fight on GPUs
+      // with a 16-bit depth buffer.
+      near={-60}
+      far={120}
       position={[
         CAMPUS_LOCATIONS[0].camera.position[0],
         CAMPUS_LOCATIONS[0].camera.position[1],

@@ -3,6 +3,7 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import type { AgendaRoom, SessionProp } from "@/data/agendaRooms";
 import { setActiveSession, setFocus } from "@/lib/journey";
+import StopNav from "@/components/ui/StopNav";
 
 const S = 34;
 const Ex = 0.866 * S;
@@ -1469,6 +1470,7 @@ export default function IsoRoom({
       </div>
 
       <NavPanel room={room} activeIndex={activeIndex} place={place} />
+      <StopNav />
     </div>
   );
 }

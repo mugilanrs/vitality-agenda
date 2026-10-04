@@ -44,10 +44,10 @@ export default function FishermanCove() {
   return (
     <group position={[x, 0, z]}>
       {/* Lawn — lighter than the campus grounds */}
-      <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, 0.02, 0.2]} material={M_GRASS} receiveShadow>
+      <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, 0.012, 0.2]} material={M_GRASS} receiveShadow>
         <circleGeometry args={[6.4, 40]} />
       </mesh>
-      <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, 0.025, 0.2]}>
+      <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, 0.014, 0.2]}>
         <ringGeometry args={[6.15, 6.4, 40]} />
         <meshStandardMaterial color={COLORS.grassDeep} roughness={1} />
       </mesh>
