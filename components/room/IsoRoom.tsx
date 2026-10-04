@@ -585,118 +585,240 @@ function DiningRoom({ fa, fb, wh }: { fa: number; fb: number; wh: number }) {
 }
 
 const PROP_INK: Record<SessionProp, string> = {
-  vision: PINK,
-  product: GREEN,
-  qa: WOOD_LT,
-  rapid: WOOD,
-  loop: WOOD,
-  cloud: "#8AA0A4",
-  governance: INK,
-  data: WOOD_LT,
-  welcome: PINK,
-  analytics: GREEN,
-  automation: WOOD,
+  reception: PINK,
+  horizon: PINK,
+  ideation: GREEN,
+  sprint: WOOD,
+  aishield: WOOD_LT,
+  cloche: PINK,
+  maturityloop: INK,
+  autonomy: WOOD,
+  runcycle: WOOD,
+  hexcloud: "#8AA0A4",
+  casefiles: GREEN,
+  contextstack: INK,
 };
 
 const PROP_BG: Record<SessionProp, string> = {
-  vision: "rgba(229,143,165,.18)",
-  product: "rgba(117,157,120,.18)",
-  qa: "rgba(155,137,143,.18)",
-  rapid: "rgba(117,99,106,.18)",
-  loop: "rgba(117,99,106,.18)",
-  cloud: "rgba(138,160,164,.18)",
-  governance: "rgba(33,26,35,.12)",
-  data: "rgba(155,137,143,.18)",
-  welcome: "rgba(229,143,165,.18)",
-  analytics: "rgba(117,157,120,.18)",
-  automation: "rgba(117,99,106,.18)",
+  reception: "rgba(229,143,165,.18)",
+  horizon: "rgba(229,143,165,.18)",
+  ideation: "rgba(117,157,120,.18)",
+  sprint: "rgba(117,99,106,.18)",
+  aishield: "rgba(155,137,143,.18)",
+  cloche: "rgba(229,143,165,.18)",
+  maturityloop: "rgba(33,26,35,.12)",
+  autonomy: "rgba(117,99,106,.18)",
+  runcycle: "rgba(117,99,106,.18)",
+  hexcloud: "rgba(138,160,164,.18)",
+  casefiles: "rgba(117,157,120,.18)",
+  contextstack: "rgba(33,26,35,.12)",
 };
+
+function hexPts(cx: number, cy: number, r: number) {
+  return Array.from({ length: 6 }, (_, k) => {
+    const a = (Math.PI / 180) * (60 * k + 30);
+    return `${(cx + r * Math.cos(a)).toFixed(1)},${(cy + r * Math.sin(a)).toFixed(1)}`;
+  }).join(" ");
+}
 
 function PropGlyph({ type }: { type: SessionProp }) {
   const c = PROP_INK[type];
-  if (type === "welcome") {
-    return (
-      <g fill={c}>
-        <circle cx={0} cy={-10} r={8} />
-        <path d="M-14 16c0-8 6-12 14-12s14 4 14 12" />
-      </g>
-    );
+  switch (type) {
+    case "reception":
+      // Champagne toast — two flutes clinking, spark and bubbles.
+      return (
+        <g>
+          {[-1, 1].map((s) => (
+            <g key={s} transform={`translate(${s * 8} 4) rotate(${s * 20})`}>
+              <path d="M-5 -14 H5 L3 5 Q0 8 -3 5 Z" fill={c} opacity={0.9} />
+              <line x1={0} y1={7} x2={0} y2={15} stroke={c} strokeWidth={2} />
+              <line x1={-5} y1={15} x2={5} y2={15} stroke={c} strokeWidth={2.5} strokeLinecap="round" />
+            </g>
+          ))}
+          <g stroke={c} strokeWidth={2} strokeLinecap="round">
+            <line x1={0} y1={-20} x2={0} y2={-13} />
+            <line x1={-6} y1={-17} x2={-3} y2={-14} />
+            <line x1={6} y1={-17} x2={3} y2={-14} />
+          </g>
+          <circle cx={-3} cy={-8} r={1.6} fill={PAPER} />
+          <circle cx={4} cy={-5} r={1.2} fill={PAPER} />
+          <circle cx={1} cy={-1} r={1.4} fill={PAPER} />
+        </g>
+      );
+    case "horizon":
+      // Eye whose pupil is a compass star, with a horizon line.
+      return (
+        <g>
+          <ellipse cx={0} cy={0} rx={22} ry={13} fill={PAPER} stroke={c} strokeWidth={3} />
+          <path d="M0 -9 L2.4 -2.4 L9 0 L2.4 2.4 L0 9 L-2.4 2.4 L-9 0 L-2.4 -2.4 Z" fill={c} />
+          <line x1={-24} y1={19} x2={24} y2={19} stroke={c} strokeWidth={2} strokeDasharray="4 3" strokeLinecap="round" />
+        </g>
+      );
+    case "ideation":
+      // Lightbulb whose base becomes an isometric cube.
+      return (
+        <g>
+          <circle cx={0} cy={-10} r={11} fill="none" stroke={c} strokeWidth={3} />
+          <path d="M-4 -9 L0 -4 L4 -9" fill="none" stroke={c} strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" />
+          <polygon points="0,4 9,9 9,18 0,23 -9,18 -9,9" fill={c} />
+          <path d="M0 14 L9 9 M0 14 L-9 9 M0 14 V23" stroke={PAPER} strokeWidth={1.6} fill="none" />
+        </g>
+      );
+    case "sprint":
+      // Stopwatch with a bolt for a hand and three bricks stacking below.
+      return (
+        <g>
+          <rect x={-3} y={-20} width={6} height={4} rx={1} fill={c} />
+          <circle cx={0} cy={0} r={15} fill={PAPER} stroke={c} strokeWidth={3} />
+          <polygon points="2,-9 -5,3 0,3 -2,11 6,-2 1,-2" fill={c} />
+          <rect x={-14} y={19} width={8} height={4} fill={c} />
+          <rect x={-4} y={19} width={8} height={4} fill={c} opacity={0.8} />
+          <rect x={6} y={19} width={8} height={4} fill={c} opacity={0.6} />
+        </g>
+      );
+    case "aishield":
+      // Shield with circuit-trace check and a magnifier.
+      return (
+        <g>
+          <path d="M0 -20 L16 -12 V2 C16 14 8 20 0 24 C-8 20 -16 14 -16 2 V-12 Z" fill={c} />
+          <g fill="none" stroke={PAPER} strokeWidth={2.2} strokeLinecap="round" strokeLinejoin="round">
+            <path d="M-8 -4 H-2 L2 0 V8" />
+            <path d="M8 -8 V-3 H4" />
+          </g>
+          <circle cx={-8} cy={-4} r={2} fill={PAPER} />
+          <circle cx={8} cy={-8} r={2} fill={PAPER} />
+          <circle cx={12} cy={12} r={6} fill={PAPER} stroke={INK} strokeWidth={2.5} />
+          <line x1={16.5} y1={16.5} x2={22} y2={22} stroke={INK} strokeWidth={3} strokeLinecap="round" />
+        </g>
+      );
+    case "cloche":
+      // Serving dome with steam and two chat dots.
+      return (
+        <g transform="translate(0 4)">
+          <path d="M-18 8 A18 18 0 0 1 18 8 Z" fill={c} />
+          <circle cx={0} cy={-12} r={2.5} fill={c} />
+          <rect x={-22} y={8} width={44} height={3} rx={1.5} fill={c} />
+          <g fill="none" stroke={c} strokeWidth={2} strokeLinecap="round">
+            <path d="M-6 -17 q-3 -4 0 -8" />
+            <path d="M6 -17 q-3 -4 0 -8" />
+          </g>
+          <circle cx={-4} cy={17} r={2} fill={c} />
+          <circle cx={4} cy={17} r={2} fill={c} />
+        </g>
+      );
+    case "maturityloop":
+      // Infinity loop: stair bars (maturity) on one side, loop arrow on the other.
+      return (
+        <g>
+          <path
+            d="M0 0 C-6 -12 -22 -12 -22 0 C-22 12 -6 12 0 0 C6 -12 22 -12 22 0 C22 12 6 12 0 0 Z"
+            fill="none"
+            stroke={c}
+            strokeWidth={3.5}
+            strokeLinejoin="round"
+          />
+          <rect x={8} y={1} width={3} height={4} fill={c} />
+          <rect x={12.5} y={-2} width={3} height={7} fill={c} />
+          <rect x={17} y={-5} width={3} height={10} fill={c} />
+          <polygon points="-8,-9 -15,-13 -15,-5" fill={c} />
+        </g>
+      );
+    case "autonomy": {
+      // Five-segment autonomy dial with level 3 lit.
+      const r = 18;
+      return (
+        <g>
+          {[0, 1, 2, 3, 4].map((k) => {
+            const a0 = Math.PI + (k * Math.PI) / 5 + 0.06;
+            const a1 = Math.PI + ((k + 1) * Math.PI) / 5 - 0.06;
+            const x0 = (r * Math.cos(a0)).toFixed(1);
+            const y0 = (10 + r * Math.sin(a0)).toFixed(1);
+            const x1 = (r * Math.cos(a1)).toFixed(1);
+            const y1 = (10 + r * Math.sin(a1)).toFixed(1);
+            return (
+              <path
+                key={k}
+                d={`M${x0} ${y0} A${r} ${r} 0 0 1 ${x1} ${y1}`}
+                fill="none"
+                stroke={k === 2 ? PINK : c}
+                strokeWidth={5}
+                opacity={k === 2 ? 1 : 0.55}
+              />
+            );
+          })}
+          <line x1={0} y1={10} x2={0} y2={-5} stroke={c} strokeWidth={3} strokeLinecap="round" />
+          <circle cx={0} cy={10} r={3.5} fill={c} />
+          <text x={0} y={23} textAnchor="middle" style={{ fontSize: "9px", fontWeight: 800, fill: c }}>
+            L3
+          </text>
+        </g>
+      );
+    }
+    case "runcycle":
+      // Gear inside a circular arrow.
+      return (
+        <g>
+          {[0, 45, 90, 135].map((a) => (
+            <rect key={a} x={-2.5} y={-12} width={5} height={24} rx={1.5} fill={c} transform={`rotate(${a})`} />
+          ))}
+          <circle cx={0} cy={0} r={8} fill={c} />
+          <circle cx={0} cy={0} r={3.5} fill={PAPER} />
+          <path d="M-12 -17 A21 21 0 1 1 -19 6" fill="none" stroke={PINK} strokeWidth={2.6} strokeLinecap="round" />
+          <polygon points="-20,-18 -10,-21 -12,-11" fill={PINK} />
+        </g>
+      );
+    case "hexcloud":
+      // Cloud assembled from hexagon nodes.
+      return (
+        <g strokeLinejoin="round">
+          <polygon points={hexPts(-11, 6, 8)} fill={c} opacity={0.7} />
+          <polygon points={hexPts(3, 6, 8)} fill={c} />
+          <polygon points={hexPts(17, 6, 8)} fill={c} opacity={0.7} />
+          <polygon points={hexPts(-4, -7, 8)} fill={c} opacity={0.85} />
+          <polygon points={hexPts(10, -7, 8)} fill={c} opacity={0.6} />
+        </g>
+      );
+    case "casefiles":
+      // Two case cards, a rising bar chart and a ribbon.
+      return (
+        <g>
+          <rect x={-18} y={-14} width={24} height={30} rx={3} fill="none" stroke={c} strokeWidth={2.5} transform="rotate(-8)" />
+          <rect x={-8} y={-10} width={26} height={30} rx={3} fill={PAPER} stroke={c} strokeWidth={3} />
+          <rect x={-3} y={10} width={4} height={6} fill={c} />
+          <rect x={3} y={5} width={4} height={11} fill={c} />
+          <rect x={9} y={0} width={4} height={16} fill={c} />
+          <polygon points="10,-14 18,-14 18,-4 14,-8 10,-4" fill={PINK} />
+        </g>
+      );
+    case "contextstack":
+      // Stacked context layers inside focus brackets.
+      return (
+        <g>
+          <polygon points="0,-12 16,-4 0,4 -16,-4" fill={c} opacity={0.3} />
+          <polygon points="0,-2 16,6 0,14 -16,6" fill={c} opacity={0.6} />
+          <polygon points="0,8 16,16 0,24 -16,16" fill={c} />
+          <g fill="none" stroke={PINK} strokeWidth={2.5} strokeLinecap="round" strokeLinejoin="round">
+            <path d="M-22 -10 V-20 H-12" />
+            <path d="M22 -10 V-20 H12" />
+          </g>
+        </g>
+      );
   }
-  if (type === "vision") {
-    return (
-      <g>
-        <ellipse cx={0} cy={0} rx={22} ry={13} fill={PAPER} stroke={c} strokeWidth={3} />
-        <circle cx={0} cy={0} r={6} fill={c} />
-      </g>
-    );
-  }
-  if (type === "qa") {
-    return (
-      <g>
-        <path d="M0 -20 L16 -12 V2 C16 14 8 20 0 24 C-8 20 -16 14 -16 2 V-12 Z" fill={c} />
-        <polyline points="-7,2 -1,8 8,-6" fill="none" stroke={PAPER} strokeWidth={3} strokeLinecap="round" />
-      </g>
-    );
-  }
-  if (type === "product" || type === "loop") {
-    return (
-      <g stroke={c} strokeWidth={4} fill="none" strokeLinecap="round">
-        <path d="M-16 -8 L-6 2 L-16 12" />
-        <path d="M16 -8 L6 2 L16 12" />
-      </g>
-    );
-  }
-  if (type === "rapid") {
-    return <polygon points="4,-22 -14,4 0,4 -4,22 16,-6 2,-6" fill={c} />;
-  }
-  if (type === "cloud" || type === "automation") {
-    return (
-      <g fill={c}>
-        <circle cx={-10} cy={2} r={10} />
-        <circle cx={6} cy={-2} r={13} />
-        <circle cx={16} cy={6} r={8} />
-      </g>
-    );
-  }
-  if (type === "governance") {
-    return (
-      <g fill={c}>
-        <rect x={-16} y={-6} width={6} height={18} />
-        <rect x={-3} y={-14} width={6} height={26} />
-        <rect x={10} y={-2} width={6} height={14} />
-      </g>
-    );
-  }
-  if (type === "data") {
-    return (
-      <g fill="none" stroke={c} strokeWidth={3}>
-        <ellipse cx={0} cy={-8} rx={16} ry={6} />
-        <path d="M-16 -8 V6 C-16 10 -8 14 0 14 C8 14 16 10 16 6 V-8" />
-        <path d="M-16 0 C-16 4 -8 8 0 8 C8 8 16 4 16 0" />
-      </g>
-    );
-  }
-  return (
-    <g fill={c}>
-      <rect x={-14} y={4} width={6} height={12} />
-      <rect x={-4} y={-6} width={6} height={22} />
-      <rect x={6} y={-14} width={6} height={30} />
-    </g>
-  );
 }
 
 const PROP_LABELS: Record<SessionProp, string> = {
-  vision: "Vision",
-  product: "Product",
-  qa: "Testing",
-  rapid: "Build",
-  loop: "AMS",
-  cloud: "GCP",
-  governance: "Governance",
-  data: "Data",
-  welcome: "Welcome",
-  analytics: "GCP Case",
-  automation: "AI in Action",
+  reception: "Welcome",
+  horizon: "AI Vision",
+  ideation: "Product",
+  sprint: "Rapid Build",
+  aishield: "AI QA",
+  cloche: "Lunch",
+  maturityloop: "Maturity",
+  autonomy: "AI in Action",
+  runcycle: "AI AMS",
+  hexcloud: "GCP",
+  casefiles: "GCP Cases",
+  contextstack: "Context",
 };
 
 const RAIL_ICONS = [
@@ -976,7 +1098,7 @@ export default function IsoRoom({
                   <dt className="font-bold" style={{ color: INK }}>Location</dt>
                   <dd>{place}</dd>
                   <dt className="font-bold" style={{ color: INK }}>About</dt>
-                  <dd>{active.detail}</dd>
+                  <dd style={{ whiteSpace: "pre-line" }}>{active.detail}</dd>
                 </dl>
               </>
             )}
@@ -996,7 +1118,7 @@ export default function IsoRoom({
             )}
             {room.type === "odc" && <OdcDressing fb={fb} fa={fa} />}
             {dining && <DiningRoom fa={fa} fb={fb} wh={wh} />}
-            {!dining && room.sessions.map((session, i) => {
+            {room.sessions.map((session, i) => {
               const slot = session.propSlot;
               const isActive = session.id === active?.id;
               const isHovered = session.id === hoveredId;
