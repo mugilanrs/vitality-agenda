@@ -408,7 +408,45 @@ const railStyles = `
       bottom: calc(12px + env(safe-area-inset-bottom, 0px));
       width: auto;
     }
-    .rail-right .rail-card { padding: 12px 13px; }
+    .rail-right .rail-card {
+      padding: 12px 13px;
+      max-height: calc(100dvh - 12rem);
+      overflow-y: auto;
+    }
     .rail-right .rail-jump button { padding: 5px 8px; }
+  }
+
+  /* Phones: one line per stop (name left, time right) so the whole card fits. */
+  @media (max-width: 640px) {
+    .rail-right {
+      left: 10px;
+      right: 10px;
+      bottom: calc(10px + env(safe-area-inset-bottom, 0px));
+    }
+    .rail-right .rail-card { padding: 9px 10px; }
+    .rail-right .rail-eyebrow { margin-bottom: 3px; font-size: 10px; }
+    .rail-right .rail-jump { gap: 0; }
+    .rail-right .rail-jump button {
+      grid-template-columns: 18px 1fr;
+      gap: 6px;
+      padding: 4px 6px;
+    }
+    .rail-right .rail-jump .rtxt {
+      flex-direction: row;
+      align-items: baseline;
+      justify-content: space-between;
+      gap: 8px;
+    }
+    .rail-right .rail-jump .rnm {
+      font-size: 12px;
+      white-space: nowrap;
+    }
+    .rail-right .rail-jump .rmeta {
+      font-size: 10.5px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      min-width: 0;
+    }
   }
 `;
