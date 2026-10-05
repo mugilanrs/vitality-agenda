@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import JourneyShell from "@/components/ui/JourneyShell";
 
 /**
  * Password gate. The password decides whose journey loads (see
@@ -10,6 +11,7 @@ import { useRouter } from "next/navigation";
 export default function LoginPage() {
   const router = useRouter();
   const [password, setPassword] = useState("");
+  const [show, setShow] = useState(false);
   const [error, setError] = useState("");
   const [busy, setBusy] = useState(false);
 
@@ -37,78 +39,54 @@ export default function LoginPage() {
   }
 
   return (
-    <main
-      className="fixed inset-0 flex items-center justify-center overflow-hidden px-5"
-      style={{ background: "linear-gradient(180deg, #FBE8D2, #F2C2D6)" }}
-    >
-      <div
-        aria-hidden
-        className="absolute inset-0"
-        style={{
-          background: "url(/welcome/campus.jpg) 50% 50% / cover no-repeat",
-          filter: "blur(14px)",
-          opacity: 0.55,
-          transform: "scale(1.06)",
-        }}
-      />
-      <form
-        onSubmit={submit}
-        className="relative w-full max-w-[420px] rounded-[26px] px-6 py-7 text-center"
-        style={{
-          background: "rgba(255,246,238,.82)",
-          backdropFilter: "blur(16px)",
-          WebkitBackdropFilter: "blur(16px)",
-          border: "2px solid rgba(255,105,170,.92)",
-          boxShadow: "0 18px 50px rgba(120,20,80,.22)",
-        }}
-      >
-        <div
-          className="text-[12px] font-extrabold uppercase tracking-[0.24em]"
-          style={{ color: "#9E0F48" }}
-        >
-          An AI-first day at TCS Siruseri
+    <JourneyShell>
+      <form onSubmit={submit}>
+        <div className="js-lock" aria-hidden>
+          <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <rect x="5" y="11" width="14" height="9" rx="2.5" />
+            <path d="M8 11V8a4 4 0 0 1 8 0v3" />
+          </svg>
         </div>
-        <h1
-          className="font-display mt-2 text-4xl font-extrabold"
-          style={{ color: "#16203A", lineHeight: 1.04, letterSpacing: "-0.02em" }}
-        >
+        <div className="js-eyebrow">An AI-first day at TCS Siruseri</div>
+        <h1 className="font-display js-title" style={{ fontWeight: 800, letterSpacing: "-0.02em" }}>
           Welcome to TCS
         </h1>
-        <p className="mt-2 text-sm" style={{ color: "#2F2836" }}>
-          Enter your password to see your journey.
-        </p>
+        <p className="js-copy">Sign in with the password you were given to see your sessions, rooms and timings.</p>
 
         <label htmlFor="password" className="sr-only">
           Password
         </label>
-        <input
-          id="password"
-          type="password"
-          autoComplete="current-password"
-          autoFocus
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-          placeholder="Password"
-          className="mt-5 w-full rounded-full border px-4 py-3 text-center text-base outline-none focus:ring-2"
-          style={{
-            background: "rgba(255,255,255,.95)",
-            borderColor: error ? "#D81B60" : "rgba(33,26,35,.18)",
-            color: "#16203A",
-          }}
-        />
+        <div style={{ position: "relative", marginTop: 24 }}>
+          <input
+            id="password"
+            type={show ? "text" : "password"}
+            autoComplete="current-password"
+            autoFocus
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            placeholder="Password"
+            className="w-full rounded-[14px] border bg-white py-[15px] pl-[18px] pr-14 text-base outline-none focus:ring-2"
+            style={{ borderColor: error ? "#D81B60" : "#e4c3d1", color: "#16203A" }}
+          />
+          <button
+            type="button"
+            onClick={() => setShow((s) => !s)}
+            aria-label={show ? "Hide password" : "Show password"}
+            className="absolute right-3 top-1/2 -translate-y-1/2 rounded-md px-2 py-1 text-xs font-bold"
+            style={{ color: "#9E0F48" }}
+          >
+            {show ? "Hide" : "Show"}
+          </button>
+        </div>
         <div role="alert" className="mt-2 min-h-[1.25rem] text-[13px] font-semibold" style={{ color: "#B0124F" }}>
           {error}
         </div>
 
-        <button
-          type="submit"
-          disabled={busy || !password.trim()}
-          className="mt-2 w-full rounded-full px-4 py-3 text-sm font-bold text-white disabled:opacity-60"
-          style={{ background: "#D81B60", boxShadow: "0 8px 24px rgba(120,20,80,.25)" }}
-        >
-          {busy ? "Checking…" : "Enter"}
+        <button type="submit" disabled={busy || !password.trim()} className="js-btn" style={{ marginTop: 6 }}>
+          {busy ? "Checking…" : "Enter my journey"}
         </button>
+        <div className="js-hint">Need help? Ask the event coordinator.</div>
       </form>
-    </main>
+    </JourneyShell>
   );
 }
