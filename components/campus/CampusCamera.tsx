@@ -13,6 +13,7 @@ import {
   clampZoom,
   orthoBoundsForViewport,
   overviewCloseUp,
+  overviewPanRight,
   portraitOverviewBoost,
 } from "@/lib/cameraConfig";
 import type { CameraState } from "@/lib/camera";
@@ -127,6 +128,17 @@ export default function CampusCamera() {
 
       vPos.copy(vA).lerp(vB, f);
       vTarget.copy(tA).lerp(tB, f);
+
+      // Overview only: slide the map left on landscape screens (see
+      // overviewPanRight). Camera right vector is (1, 0, -1) / sqrt(2).
+      const panAspect = size.width / size.height;
+      const panA = i0 === 0 ? overviewPanRight(panAspect) : 0;
+      const panB = i1 === 0 ? overviewPanRight(panAspect) : 0;
+      const pan = (panA + (panB - panA) * f) * Math.SQRT1_2;
+      vPos.x += pan;
+      vPos.z -= pan;
+      vTarget.x += pan;
+      vTarget.z -= pan;
 
       // Stop 0 is the overview; only it gets the portrait boost + landscape close-up.
       const aspect = size.width / size.height;
