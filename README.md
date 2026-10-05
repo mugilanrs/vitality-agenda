@@ -65,6 +65,9 @@ decides which sessions and buildings they see. Attendee names are never shown in
 the UI, and the full timetable lives server-side in `data/agendaSource.ts` — the
 browser only receives the signed-in attendee's own rooms from `/api/me`.
 
-- Set `SESSION_SECRET` in production (see `.env.example`).
-- Needs a Node server (`next start` / Vercel), not a static export.
+- Deployed on Vercel from `main`. Add `SESSION_SECRET` under Project → Settings →
+  Environment Variables (Production and Preview), then redeploy. Optional:
+  `ATTENDEE_PASSWORD_SUFFIX`. Without `SESSION_SECRET`, login returns an error.
+- The login attempt limiter is in-memory per serverless instance, so it only slows
+  guessing; it is not a hard lockout.
 - Attendees, passwords and who attends what: `data/attendees.ts`, `data/agendaSource.ts`.

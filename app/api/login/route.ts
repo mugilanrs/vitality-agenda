@@ -10,7 +10,11 @@ import {
 } from "@/lib/server/auth";
 
 export async function POST(request: Request) {
-  const ip = request.headers.get("x-forwarded-for")?.split(",")[0]?.trim() ?? "local";
+  // On Vercel the client IP arrives in x-forwarded-for / x-real-ip.
+  const ip =
+    request.headers.get("x-forwarded-for")?.split(",")[0]?.trim() ??
+    request.headers.get("x-real-ip") ??
+    "local";
   if (tooManyAttempts(ip)) {
     return Response.json({ error: "Too many attempts. Try again in a few minutes." }, { status: 429 });
   }
@@ -30,7 +34,15 @@ export async function POST(request: Request) {
   }
 
   clearAttempts(ip);
+  let token: string;
+  try {
+    token = await createSessionToken(id);
+  } catch (err) {
+    // Most likely SESSION_SECRET is missing from the Vercel environment.
+    console.error("Login failed: could not create a session", err);
+    return Response.json({ error: "Login is not configured yet." }, { status: 500 });
+  }
   const cookieStore = await cookies();
-  cookieStore.set(SESSION_COOKIE, await createSessionToken(id), sessionCookieOptions);
+  cookieStore.set(SESSION_COOKIE, token, sessionCookieOptions);
   return Response.json({ ok: true });
 }
