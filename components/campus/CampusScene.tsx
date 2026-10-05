@@ -135,7 +135,6 @@ export default function CampusScene() {
             <FishermanCove />
             <AirportDestination />
 
-
             <SpatialFocus />
             <CampusHotspots />
             <SpatialTiles />
