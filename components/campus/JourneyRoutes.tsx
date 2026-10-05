@@ -7,7 +7,6 @@ import {
   CAMPUS_EDGE,
   FISHERMAN_COVE_POSITION,
 } from "@/data/externalDestinations";
-import { COLORS } from "@/lib/materials";
 
 /**
  * Narrative paths that meet the campus boundary and stop there.
@@ -96,16 +95,16 @@ export default function JourneyRoutes() {
   return (
     <group>
       <mesh geometry={geometry.north} receiveShadow>
-        <meshStandardMaterial color={"#e7d4da"} roughness={1} side={THREE.DoubleSide} polygonOffset polygonOffsetFactor={-6} polygonOffsetUnits={-6} />
+        <meshStandardMaterial color={"#d9d2c2"} roughness={1} side={THREE.DoubleSide} polygonOffset polygonOffsetFactor={-6} polygonOffsetUnits={-6} />
       </mesh>
       <mesh geometry={geometry.south} receiveShadow>
-        <meshStandardMaterial color={"#e7d4da"} roughness={1} side={THREE.DoubleSide} polygonOffset polygonOffsetFactor={-6} polygonOffsetUnits={-6} />
+        <meshStandardMaterial color={"#d9d2c2"} roughness={1} side={THREE.DoubleSide} polygonOffset polygonOffsetFactor={-6} polygonOffsetUnits={-6} />
       </mesh>
       <mesh geometry={geometry.northLine} position={[0, 0.015, 0]}>
-        <meshBasicMaterial color={COLORS.blossomPink} transparent opacity={0.85} side={THREE.DoubleSide} polygonOffset polygonOffsetFactor={-8} polygonOffsetUnits={-8} />
+        <meshBasicMaterial color={"#EE5A8F"} transparent opacity={1} side={THREE.DoubleSide} polygonOffset polygonOffsetFactor={-8} polygonOffsetUnits={-8} />
       </mesh>
       <mesh geometry={geometry.southLine} position={[0, 0.015, 0]}>
-        <meshBasicMaterial color={COLORS.blossomPink} transparent opacity={0.85} side={THREE.DoubleSide} polygonOffset polygonOffsetFactor={-8} polygonOffsetUnits={-8} />
+        <meshBasicMaterial color={"#EE5A8F"} transparent opacity={1} side={THREE.DoubleSide} polygonOffset polygonOffsetFactor={-8} polygonOffsetUnits={-8} />
       </mesh>
     </group>
   );
