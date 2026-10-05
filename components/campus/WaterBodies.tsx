@@ -3,7 +3,7 @@
 import { useMemo, useRef } from "react";
 import * as THREE from "three";
 import { useFrame } from "@react-three/fiber";
-import { M_WATER } from "@/lib/materials";
+import { M_WATER, M_CONCRETE_LIGHT } from "@/lib/materials";
 import { journey } from "@/lib/journey";
 
 /**
@@ -88,6 +88,15 @@ export default function WaterBodies() {
     <group>
       {/* Entrance lake — the plaza ring, south of the spine */}
       <group position={[0, 0.02, 6.5]}>
+        {/* Pale stone rim around the water */}
+        <mesh
+          rotation={[-Math.PI / 2, 0, 0]}
+          position={[0, -0.012, 0]}
+          scale={[1.1, 1.1, 1]}
+          material={M_CONCRETE_LIGHT}
+        >
+          <shapeGeometry args={[plazaWater]} />
+        </mesh>
         <mesh
           rotation={[-Math.PI / 2, 0, 0]}
           material={M_WATER}

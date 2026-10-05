@@ -14,7 +14,7 @@ import { journey } from "@/lib/journey";
  *   - broadleaf tree: rounded canopy on a short trunk (perimeter ring, inner clusters)
  *   - narrow tree:    upright conifer-ish (perimeter ring, filler)
  *   - palm:           radial fronds on a slim trunk (plaza + residential lake rings + boulevard)
- *   - ornamental:     small pink-blossom tree (plaza edge, entrance flanks)
+ *   - ornamental:     small green shrub tree (plaza edge, entrance flanks)
  *
  * Each species picks its own count, positions, and per-instance scale/rotation
  * jitter so the vegetation never looks tiled or randomly scattered.
@@ -149,8 +149,8 @@ function makeOrnamentalGeometry(): THREE.BufferGeometry {
     [trunk, canopy, canopy2],
     [
       new THREE.Color(COLORS.trunk),
-      new THREE.Color(COLORS.blossomPink),
-      new THREE.Color("#f7b6cf"),
+      new THREE.Color("#5E9A55"),
+      new THREE.Color("#7DB46C"),
     ],
   );
 }
