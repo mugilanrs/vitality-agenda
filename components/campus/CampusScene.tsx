@@ -1,7 +1,7 @@
 "use client";
 
 import { Canvas, useThree } from "@react-three/fiber";
-import { ContactShadows, SoftShadows } from "@react-three/drei";
+import { SoftShadows } from "@react-three/drei";
 import { Suspense, useEffect, useMemo, useState } from "react";
 import * as THREE from "three";
 import CampusCamera from "./CampusCamera";
@@ -135,15 +135,6 @@ export default function CampusScene() {
             <FishermanCove />
             <AirportDestination />
 
-            <ContactShadows
-              position={[0, 0.02, 0]}
-              opacity={0.35}
-              scale={48}
-              blur={2.4}
-              far={5}
-              resolution={quality.contactShadowsRes}
-              color={"#18261c"}
-            />
 
             <SpatialFocus />
             <CampusHotspots />
