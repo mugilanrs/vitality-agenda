@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 import Roads from "./Roads";
 import CentralSpine from "./CentralSpine";
 import CampusBuilding from "./CampusBuilding";
@@ -9,6 +9,7 @@ import WaterBodies from "./WaterBodies";
 import Bridges from "./Bridges";
 import Vegetation from "./Vegetation";
 import CampusPerimeter from "./CampusPerimeter";
+import VegetationOuter from "./VegetationOuter";
 import {
   M_GROUND,
   M_GRASS,
@@ -25,124 +26,22 @@ import { journey, subscribeJourney } from "@/lib/journey";
  *   │ 6 primary blocks · central spine · tower     │
  *   │           · entrance lake                    │
  *   │                                              │
- *   └──── white / pale-pink architectural model ───┘
+ *   └──────────── forest all around ───────────────┘
  *
- * External environment uses white/pale-pink to read as a premium architectural
- * presentation model. Inner campus stays natural (white architecture, glass,
- * green grass, water).
+ * The surroundings are a quiet forest that fades into the scene haze; the
+ * inner campus stays natural (architecture, glass, green grass, water).
  */
 
 function ExternalEnvironment() {
-  // A few soft white "district" blocks and thin pink road lines around the
-  // campus, so the exterior reads as an architectural model rather than
-  // empty ground.
-  const blocks = useMemo(() => {
-    const arr: {
-      r: number;
-      a: number;
-      w: number;
-      d: number;
-      rot: number;
-    }[] = [];
-    const rings = [
-      { R: 22, count: 12 },
-      { R: 28, count: 14 },
-      { R: 33, count: 16 },
-    ];
-    for (const { R, count } of rings) {
-      for (let i = 0; i < count; i++) {
-        const a = (i / count) * Math.PI * 2 + (R * 0.13);
-        const seed = ((i * 91 + R * 17) % 100) / 100;
-        // Keep the north (hotel) and south (airport) approaches clear.
-        const gap = (target: number) =>
-          Math.abs(Math.atan2(Math.sin(a - target), Math.cos(a - target)));
-        if (gap(Math.PI / 2) < 0.62 || gap(-Math.PI / 2) < 0.62) continue;
-        arr.push({
-          r: R,
-          a,
-          w: 1.8 + seed * 2.4,
-          d: 1.8 + (1 - seed) * 2.4,
-          rot: a + (seed - 0.5) * 0.4,
-        });
-      }
-    }
-    return arr;
-  }, []);
-
-  // Thin radial "roads" — barely visible pink lines fanning out from the
-  // campus, evoking a masterplan.
-  const roads = useMemo(() => {
-    const arr: number[] = [];
-    for (let i = 0; i < 16; i++) {
-      const a = (i / 16) * Math.PI * 2;
-      const gap = (target: number) =>
-        Math.abs(Math.atan2(Math.sin(a - target), Math.cos(a - target)));
-      if (gap(Math.PI / 2) < 0.45 || gap(-Math.PI / 2) < 0.45) continue;
-      arr.push(a);
-    }
-    return arr;
-  }, []);
-
+  // Outer ground only. The old pale "district" blocks and radial streets are
+  // gone; VegetationOuter fills the surroundings with forest instead.
   return (
     <group>
-      {/* Full outer ground disc — very pale pink-white */}
+      {/* Full outer ground disc */}
       <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, -0.02, 0]}>
         <circleGeometry args={[78, 96]} />
-        <meshStandardMaterial
-          color={COLORS.groundOutside}
-          roughness={1}
-        />
+        <meshStandardMaterial color={COLORS.groundOutside} roughness={1} />
       </mesh>
-
-      {/* Soft atmospheric haze ring — barely pink, further out */}
-      <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, -0.015, 0]}>
-        <ringGeometry args={[40, 78, 96]} />
-        <meshStandardMaterial
-          color={COLORS.outsideMistPink}
-          transparent
-          opacity={0.12}
-          roughness={1}
-          depthWrite={false}
-        />
-      </mesh>
-
-      {/* Very subtle radial "streets" */}
-      {roads.map((a, i) => (
-        <mesh
-          key={`road-${i}`}
-          rotation={[-Math.PI / 2, 0, -a + Math.PI / 2]}
-          position={[Math.cos(a) * 26, -0.01, Math.sin(a) * 26]}
-        >
-          <planeGeometry args={[0.06, 22]} />
-          <meshStandardMaterial
-            color={COLORS.outsidePathPink}
-            transparent
-            opacity={0.35}
-            roughness={1}
-          />
-        </mesh>
-      ))}
-
-      {/* White low blocks arranged in rings — architectural model surroundings */}
-      {blocks.map((b, i) => (
-        <mesh
-          key={`blk-${i}`}
-          castShadow={false}
-          receiveShadow
-          position={[
-            Math.cos(b.a) * b.r,
-            0.09,
-            Math.sin(b.a) * b.r,
-          ]}
-          rotation={[0, -b.rot, 0]}
-        >
-          <boxGeometry args={[b.w, 0.18 + ((i * 3) % 5) * 0.05, b.d]} />
-          <meshStandardMaterial
-            color={COLORS.outsideBlockWhite}
-            roughness={0.85}
-          />
-        </mesh>
-      ))}
     </group>
   );
 }
@@ -250,6 +149,7 @@ export default function CampusArchitecture() {
   return (
     <group>
       <ExternalEnvironment />
+      <VegetationOuter />
       <Terrain />
       <Roads />
       <WaterBodies />
