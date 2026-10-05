@@ -33,7 +33,7 @@ export const COLORS = {
   solar: "#243046",
   metalDark: "#6F808C",
   ground: "#CCC7B2",
-  groundOutside: "#3F6B3A",
+  groundOutside: "#5B8E4B",
   eb3Shell: "#DCE3E7",
   eb3Secondary: "#BCC9D1",
   eb3Roof: "#C2B89E",

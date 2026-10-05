@@ -18,9 +18,9 @@ import { detectQuality } from "@/lib/quality";
  * the north/south approach corridors.
  */
 
-const TREE_COUNT = 3200;
 const R_MIN = CAMPUS_EDGE + 1.8;
-const R_MAX = 60;
+const R_MAX = 46;
+const CELL = 1.5; // jittered grid → even spacing, no clumps or bald patches
 const GREENS = ["#2F6B35", "#3E7F40", "#2A5A31", "#4C8F46", "#356F3A"];
 
 /** Small deterministic PRNG so the forest is identical on every load. */
@@ -29,32 +29,37 @@ function rng(seed: number) {
   return () => ((s = (s * 1664525 + 1013904223) >>> 0) / 4294967296);
 }
 
-function buildTrees(count: number) {
+function buildTrees(keep: number) {
   const r = rng(11);
   const [cx, , cz] = FISHERMAN_COVE_POSITION;
   const [ax, , az] = AIRPORT_POSITION;
   const out: { x: number; z: number; s: number; c: THREE.Color }[] = [];
-  for (let i = 0; i < count * 1.3 && out.length < count; i++) {
-    const a = r() * Math.PI * 2;
-    const d = R_MIN + Math.sqrt(r()) * (R_MAX - R_MIN);
-    const x = Math.cos(a) * d;
-    const z = Math.sin(a) * d;
-    if (Math.hypot(x - cx, z - cz) < 7.6) continue;
-    if (Math.hypot(x - ax, z - az) < 9.5) continue;
-    if (Math.abs(x) < 1.1 && Math.abs(z) < 25) continue;
-    out.push({
-      x,
-      z,
-      s: 0.7 + r() * 0.7,
-      c: new THREE.Color(GREENS[Math.floor(r() * GREENS.length)]),
-    });
+  const n = Math.ceil(R_MAX / CELL);
+  for (let i = -n; i <= n; i++) {
+    for (let j = -n; j <= n; j++) {
+      // Thin the forest on lower quality tiers without opening big gaps.
+      if (r() > keep) continue;
+      const x = (i + (r() - 0.5) * 0.9) * CELL;
+      const z = (j + (r() - 0.5) * 0.9) * CELL;
+      const d = Math.hypot(x, z);
+      if (d < R_MIN || d > R_MAX) continue;
+      if (Math.hypot(x - cx, z - cz) < 7.6) continue;
+      if (Math.hypot(x - ax, z - az) < 9.5) continue;
+      if (Math.abs(x) < 1.1 && Math.abs(z) < 25) continue;
+      out.push({
+        x,
+        z,
+        s: 0.7 + r() * 0.6,
+        c: new THREE.Color(GREENS[Math.floor(r() * GREENS.length)]),
+      });
+    }
   }
   return out;
 }
 
 export default function VegetationOuter() {
   const trees = useMemo(
-    () => buildTrees(Math.round(TREE_COUNT * detectQuality().vegetationScale)),
+    () => buildTrees(detectQuality().vegetationScale),
     [],
   );
   const ref = useRef<THREE.InstancedMesh>(null);
