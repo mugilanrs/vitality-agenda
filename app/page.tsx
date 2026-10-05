@@ -8,6 +8,7 @@ import CampusJourney, {
 import WelcomeIntro from "@/components/ui/WelcomeIntro";
 import AgendaOverlay from "@/components/ui/AgendaOverlay";
 import BrandMark from "@/components/ui/BrandMark";
+import TopMist from "@/components/ui/TopMist";
 import DebugOverlay from "@/components/ui/DebugOverlay";
 import SideRails from "@/components/ui/SideRails";
 import WebGLBoundary from "@/components/ui/WebGLBoundary";
@@ -44,6 +45,7 @@ export default function Home() {
         <WebGLBoundary>
           <CampusScene />
         </WebGLBoundary>
+        <TopMist />
       </div>
 
       <CampusJourney ref={journeyRef} onActive={() => {}} />

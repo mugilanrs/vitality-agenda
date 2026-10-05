@@ -70,10 +70,10 @@ export default function CampusScene() {
   const useSoftShadows = quality.softShadows;
   const shadowMap = quality.shadowMap;
 
-  const skyColorHex = 0xb4d4e6;
+  const skyColorHex = 0xd0e4ef;
   const styleBg = useMemo(
     () => ({
-      background: "linear-gradient(180deg, #cfe4f0 0%, #b4d4e6 55%, #9fc5dc 100%)",
+      background: "linear-gradient(180deg, #e3f0f7 0%, #d0e4ef 55%, #bcd6e6 100%)",
     }),
     [],
   );

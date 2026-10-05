@@ -35,7 +35,7 @@ export default function BrandMark() {
         style={{
           color: "#4A0F2E",
           letterSpacing: "0.2em",
-          textShadow: "0 1px 0 rgba(255,255,255,.35)",
+          textShadow: "0 0 10px rgba(255,255,255,.85), 0 1px 0 rgba(255,255,255,.6)",
         }}
       >
         Explore · Your Journey
@@ -44,6 +44,7 @@ export default function BrandMark() {
         className="font-display mt-1 text-xl font-extrabold md:text-2xl"
         style={{
           color: "#182033",
+          textShadow: "0 0 14px rgba(255,255,255,.9)",
           lineHeight: 1.02,
           letterSpacing: "-0.02em",
         }}
@@ -52,7 +53,7 @@ export default function BrandMark() {
       </div>
       <div
         className="mt-1.5 text-[12px] font-medium"
-        style={{ color: "#2B2230", textShadow: "0 1px 0 rgba(255,255,255,.3)" }}
+        style={{ color: "#1d1722", textShadow: "0 0 10px rgba(255,255,255,.9), 0 1px 0 rgba(255,255,255,.6)" }}
       >
         A day across the company — six stops, one map.
       </div>
