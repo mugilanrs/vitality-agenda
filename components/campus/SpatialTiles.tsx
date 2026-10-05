@@ -104,7 +104,9 @@ function preferredOffset(building: BuildingSpec, isMobile: boolean) {
   // Hotel sits at the top of the overview — keep the pill below the roof.
   // Airport sits at the bottom — keep the pill above the terminal.
   if (building.id === "fisherman-cove") {
-    return { dx: 0, dy: isMobile ? 36 : 48 };
+    // Phones: the hotel is cut by the right edge, so a pill BELOW it lands on
+    // the Signature Tower. Put it above the roof instead, away from the campus.
+    return { dx: 0, dy: isMobile ? -34 : 48 };
   }
   if (building.id === "airport") {
     return { dx: 0, dy: isMobile ? -36 : -46 };
@@ -299,7 +301,15 @@ function Marker({
       const overlapY = Math.abs(ty - o.y) < halfH + o.halfH + GAP;
       if (overlapX && overlapY) {
         const dir = ty >= o.y ? 1 : -1;
-        ty = o.y + dir * (halfH + o.halfH + GAP);
+        const nudgedY = o.y + dir * (halfH + o.halfH + GAP);
+        if (nudgedY - halfH >= safeTop && nudgedY + halfH <= safeBottom) {
+          ty = nudgedY;
+        } else {
+          // No vertical room left: slide sideways instead of stacking on top.
+          const dirX = tx >= o.x ? 1 : -1;
+          tx = o.x + dirX * (halfW + o.halfW + GAP);
+          tx = Math.max(safeLeft, Math.min(safeRight, tx));
+        }
       }
     }
     ty = Math.max(safeTop + halfH, Math.min(safeBottom - halfH, ty));
