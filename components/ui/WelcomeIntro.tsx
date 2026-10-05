@@ -9,14 +9,14 @@ import { setWelcome, journey } from "@/lib/journey";
  * the campus in the middle, pink glowing screen edges, and a frosted glass card
  * carrying the welcome copy.
  *
- * The photo is /public/welcome/campus.png — replace that single file with the
- * real TCS campus photo (a wide shot at least 1600px; the same file is used
- * for phones and desktops). Nothing else needs to change.
+ * Photos (replace these two files with the real TCS campus photos):
+ *   /public/welcome/campus.png       portrait crop, used under 768px wide (phones)
+ *   /public/welcome/campus-wide.jpg  landscape, at least 2400px wide (tablets/laptops)
+ * Nothing else needs to change; the files are picked in the CSS at the bottom.
  *
  * Tap anywhere → the card slips away, the sharp window opens out to fill the
  * screen and the whole screen dissolves into the 3D map.
  */
-const PHOTO = "url(/welcome/campus.png)";
 const WARM = "sepia(.55) saturate(1.8) hue-rotate(-12deg) contrast(1.12)";
 
 export default function WelcomeIntro() {
@@ -67,7 +67,6 @@ export default function WelcomeIntro() {
   const photoLayer: React.CSSProperties = {
     position: "absolute",
     inset: "-8%",
-    backgroundImage: PHOTO,
     backgroundSize: "cover",
     backgroundPosition: "48% 54%",
   };
@@ -80,11 +79,12 @@ export default function WelcomeIntro() {
       style={{ background: "linear-gradient(165deg, #F9C9B2, #E8A9C0)" }}
     >
       {/* Blurred, warm-graded photo */}
-      <div style={{ ...photoLayer, filter: `blur(7px) ${WARM}` }} />
+      <div className="welcome-photo" style={{ ...photoLayer, filter: `blur(7px) ${WARM}` }} />
 
       {/* Sharp window onto the campus */}
       <div
         ref={sharpRef}
+        className="welcome-photo"
         style={
           {
             ...photoLayer,
@@ -158,6 +158,14 @@ export default function WelcomeIntro() {
       </div>
 
       <style jsx global>{`
+        .welcome-photo {
+          background-image: url(/welcome/campus.png);
+        }
+        @media (min-width: 768px) {
+          .welcome-photo {
+            background-image: url(/welcome/campus-wide.jpg);
+          }
+        }
         @keyframes welcomeFloat {
           from {
             opacity: 0;
