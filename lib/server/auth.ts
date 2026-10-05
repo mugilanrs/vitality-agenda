@@ -60,13 +60,16 @@ function safeEqual(a: string, b: string): boolean {
 }
 
 /**
- * Returns who this password belongs to, or null. The admin password comes
- * from the ADMIN_PASSWORD env var (case-sensitive); if it isn't set, there is
- * no admin login.
+ * Returns who this password belongs to, or null. Admin follows the same
+ * pattern as attendees ("admin" + suffix, i.e. admin@india2026); setting the
+ * ADMIN_PASSWORD env var replaces it with a custom (case-sensitive) one.
  */
 export function attendeeForPassword(password: string): ViewerId | null {
-  const adminPassword = process.env.ADMIN_PASSWORD;
-  if (adminPassword && safeEqual(password.trim(), adminPassword)) return "admin";
+  const customAdmin = process.env.ADMIN_PASSWORD;
+  const isAdmin = customAdmin
+    ? safeEqual(password.trim(), customAdmin)
+    : safeEqual(password.trim().toLowerCase(), `admin${passwordSuffix()}`.toLowerCase());
+  if (isAdmin) return "admin";
   const given = password.trim().toLowerCase();
   let found: ViewerId | null = null;
   for (const a of ATTENDEES) {
@@ -101,7 +104,7 @@ export async function readSessionToken(token: string | undefined): Promise<Viewe
       exp?: number;
     };
     if (typeof data.exp !== "number" || data.exp < Date.now()) return null;
-    if (data.id === "admin") return process.env.ADMIN_PASSWORD ? "admin" : null;
+    if (data.id === "admin") return "admin";
     return ATTENDEES.find((a) => a.id === data.id)?.id ?? null;
   } catch {
     return null;
