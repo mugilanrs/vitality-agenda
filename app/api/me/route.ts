@@ -17,7 +17,7 @@ export async function GET() {
     // Missing SESSION_SECRET: treat as signed out rather than erroring.
   }
   if (!id) return Response.json({ error: "Not signed in." }, { status: 401 });
-  const name = ATTENDEES.find((a) => a.id === id)?.fullName ?? "";
+  const name = id === "admin" ? "Admin" : (ATTENDEES.find((a) => a.id === id)?.fullName ?? "");
   return Response.json(
     { name, rooms: agendaForAttendee(id), contacts: contactsFromEnv() },
     { headers: { "Cache-Control": "no-store" } },

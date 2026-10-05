@@ -1258,6 +1258,12 @@ function NavPanel({
       <dl className="mt-2 grid grid-cols-[4.2rem_1fr] gap-x-2 gap-y-0.5 text-[11.5px]" style={{ color: "#5c5160" }}>
         <dt className="font-bold" style={{ color: INK }}>{peopleHeading(room, active.speakers)}</dt>
         <dd><PeopleList names={active.speakers} /></dd>
+        {active.attendeeNames && (
+          <>
+            <dt className="font-bold" style={{ color: INK }}>Attendees</dt>
+            <dd><PeopleList names={active.attendeeNames} /></dd>
+          </>
+        )}
         <dt className="font-bold" style={{ color: INK }}>Where</dt>
         <dd>{place}</dd>
         {next && (
@@ -1535,6 +1541,12 @@ export default function IsoRoom({
                   <dd className="font-bold tabular-nums" style={{ color: PINK }}>{active.time}</dd>
                   <dt className="font-bold" style={{ color: INK }}>{peopleHeading(room, active.speakers)}</dt>
                   <dd><PeopleList names={active.speakers} /></dd>
+                  {active.attendeeNames && (
+                    <>
+                      <dt className="font-bold" style={{ color: INK }}>Attendees</dt>
+                      <dd><PeopleList names={active.attendeeNames} /></dd>
+                    </>
+                  )}
                   <dt className="font-bold" style={{ color: INK }}>Location</dt>
                   <dd>{place}</dd>
                   <dt className="font-bold" style={{ color: INK }}>About</dt>

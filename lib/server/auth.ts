@@ -7,7 +7,7 @@
  */
 
 import { ATTENDEES } from "@/data/attendees";
-import type { AttendeeId } from "@/data/agendaSource";
+import type { ViewerId } from "@/data/agendaSource";
 
 export const SESSION_COOKIE = "vv_session";
 const SESSION_HOURS = 48;
@@ -59,10 +59,16 @@ function safeEqual(a: string, b: string): boolean {
   return diff === 0;
 }
 
-/** Returns the attendee id whose password this is, or null. */
-export function attendeeForPassword(password: string): AttendeeId | null {
+/**
+ * Returns who this password belongs to, or null. The admin password comes
+ * from the ADMIN_PASSWORD env var (case-sensitive); if it isn't set, there is
+ * no admin login.
+ */
+export function attendeeForPassword(password: string): ViewerId | null {
+  const adminPassword = process.env.ADMIN_PASSWORD;
+  if (adminPassword && safeEqual(password.trim(), adminPassword)) return "admin";
   const given = password.trim().toLowerCase();
-  let found: AttendeeId | null = null;
+  let found: ViewerId | null = null;
   for (const a of ATTENDEES) {
     const expected = `${a.firstName}${passwordSuffix()}`.toLowerCase();
     if (safeEqual(given, expected)) found = a.id;
@@ -70,7 +76,7 @@ export function attendeeForPassword(password: string): AttendeeId | null {
   return found;
 }
 
-export async function createSessionToken(id: AttendeeId): Promise<string> {
+export async function createSessionToken(id: ViewerId): Promise<string> {
   const payload = toBase64Url(
     enc.encode(JSON.stringify({ id, exp: Date.now() + SESSION_HOURS * 3600_000 })),
   );
@@ -78,7 +84,7 @@ export async function createSessionToken(id: AttendeeId): Promise<string> {
   return `${payload}.${toBase64Url(new Uint8Array(sig))}`;
 }
 
-export async function readSessionToken(token: string | undefined): Promise<AttendeeId | null> {
+export async function readSessionToken(token: string | undefined): Promise<ViewerId | null> {
   if (!token) return null;
   const [payload, sig] = token.split(".");
   if (!payload || !sig) return null;
@@ -95,6 +101,7 @@ export async function readSessionToken(token: string | undefined): Promise<Atten
       exp?: number;
     };
     if (typeof data.exp !== "number" || data.exp < Date.now()) return null;
+    if (data.id === "admin") return process.env.ADMIN_PASSWORD ? "admin" : null;
     return ATTENDEES.find((a) => a.id === data.id)?.id ?? null;
   } catch {
     return null;

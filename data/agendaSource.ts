@@ -7,8 +7,11 @@
  */
 
 import type { AgendaRoom, AgendaSession } from "@/data/agendaRooms";
+import { ATTENDEES } from "@/data/attendees";
 
 export type AttendeeId = "a1" | "a2" | "a3" | "a4" | "a5" | "a6" | "a7";
+/** An attendee, or the admin who sees everything. */
+export type ViewerId = AttendeeId | "admin";
 
 type SourceSession = AgendaSession & { attendees: readonly AttendeeId[] };
 type SourceRoom = Omit<AgendaRoom, "sessions"> & { sessions: SourceSession[] };
@@ -234,7 +237,8 @@ const AGENDA_SOURCE: SourceRoom[] = [
  * dropped, and the `attendees` field is removed so nothing about other
  * people reaches the browser.
  */
-export function agendaForAttendee(id: AttendeeId): AgendaRoom[] {
+export function agendaForAttendee(id: ViewerId): AgendaRoom[] {
+  if (id === "admin") return agendaForAdmin();
   const rooms: AgendaRoom[] = [];
   for (const room of AGENDA_SOURCE) {
     const sessions = room.sessions
@@ -247,4 +251,16 @@ export function agendaForAttendee(id: AttendeeId): AgendaRoom[] {
     if (sessions.length > 0) rooms.push({ ...room, sessions });
   }
   return rooms;
+}
+
+/** Admin view: every room and session, with the names of who attends. */
+function agendaForAdmin(): AgendaRoom[] {
+  const nameOf = new Map(ATTENDEES.map((a) => [a.id, a.fullName]));
+  return AGENDA_SOURCE.map((room) => ({
+    ...room,
+    sessions: room.sessions.map((s) => ({
+      ...s,
+      attendeeNames: s.attendees.map((id) => nameOf.get(id) ?? id),
+    })),
+  }));
 }

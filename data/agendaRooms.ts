@@ -32,6 +32,8 @@ export type AgendaSession = {
   label?: string;
   /** Hosts, one entry per person; "to be confirmed" when absent. */
   speakers?: readonly string[];
+  /** Who attends. Only ever set for the admin view. */
+  attendeeNames?: readonly string[];
   /** Which floating prop represents this session in the room. */
   prop: SessionProp;
   /** Fixed isometric slot for this session's hotspot [a, b]. */
