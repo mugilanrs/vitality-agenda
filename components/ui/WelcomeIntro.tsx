@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import gsap from "gsap";
 import { setWelcome, journey } from "@/lib/journey";
+import { getAttendeeName } from "@/lib/agendaStore";
 
 /**
  * Opening screen ("haze fade"): the campus photo is hazy and blurred at the
@@ -112,7 +113,7 @@ export default function WelcomeIntro() {
             textWrap: "balance",
           }}
         >
-          Welcome to TCS
+          {getAttendeeName() ? `Welcome, ${getAttendeeName()}` : "Welcome to TCS"}
         </h1>
       </div>
 

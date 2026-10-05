@@ -8,10 +8,27 @@ import type { AgendaRoom } from "@/data/agendaRooms";
 import { MARKER_BUILDINGS } from "@/data/buildings";
 import type { BuildingId } from "@/lib/journey";
 
+export type Contact = { role: string; name: string; phone: string };
+
 let rooms: AgendaRoom[] = [];
+let attendeeName = "";
+let contacts: Contact[] = [];
 
 export function setAgendaRooms(next: AgendaRoom[]) {
   rooms = next;
+}
+
+export function setProfile(name: string, nextContacts: Contact[]) {
+  attendeeName = name;
+  contacts = nextContacts;
+}
+
+export function getAttendeeName(): string {
+  return attendeeName;
+}
+
+export function getContacts(): Contact[] {
+  return contacts;
 }
 
 export function getAgendaRooms(): AgendaRoom[] {

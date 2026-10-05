@@ -1,8 +1,13 @@
 import { cookies } from "next/headers";
 import { agendaForAttendee } from "@/data/agendaSource";
+import { ATTENDEES } from "@/data/attendees";
 import { SESSION_COOKIE, readSessionToken } from "@/lib/server/auth";
+import { contactsFromEnv } from "@/lib/server/contacts";
 
-/** The logged-in attendee's own rooms. Never includes who else attends. */
+/**
+ * The logged-in attendee's own name, rooms and the shared contact list.
+ * Never includes who else attends.
+ */
 export async function GET() {
   const cookieStore = await cookies();
   let id = null;
@@ -12,8 +17,9 @@ export async function GET() {
     // Missing SESSION_SECRET: treat as signed out rather than erroring.
   }
   if (!id) return Response.json({ error: "Not signed in." }, { status: 401 });
+  const name = ATTENDEES.find((a) => a.id === id)?.fullName ?? "";
   return Response.json(
-    { rooms: agendaForAttendee(id) },
+    { name, rooms: agendaForAttendee(id), contacts: contactsFromEnv() },
     { headers: { "Cache-Control": "no-store" } },
   );
 }

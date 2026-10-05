@@ -32,6 +32,11 @@ const ROOM_LABELS: Record<string, { building: string; label: string; lead?: stri
   "fisherman-cove-dinner": { building: "Fisherman Cove", label: "Fisherman Cove", lead: "Dinner" },
 };
 
+/** Display name for a room, e.g. "EB5 · Account Room". */
+export function roomLabel(room: AgendaRoom): string {
+  return ROOM_LABELS[room.id]?.label ?? room.name;
+}
+
 function startMinutes(time: string): number {
   const m = /(\d{1,2}):(\d{2})\s*(AM|PM)/i.exec(time.split("—")[0] ?? "");
   if (!m) return 0;

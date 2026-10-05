@@ -3,6 +3,9 @@
 import { useEffect, useState } from "react";
 import { journey, subscribeJourney } from "@/lib/journey";
 import { getStops, goToStop, stopIndexForFocus } from "@/lib/stops";
+import { getAgendaRooms, getContacts } from "@/lib/agendaStore";
+import { dayHours, IST } from "@/lib/schedule";
+import { useNow } from "@/lib/useNow";
 
 /**
  * Legacy-ported side rails:
@@ -52,26 +55,7 @@ export default function SideRails() {
           onToggle={(x) => setOpenIcon(openIcon === x ? null : x)}
           label="When"
           detailTitle="Day plan"
-          detailBody={
-            <ul className="rail-list">
-              <li>
-                <span>Date</span>
-                <b>Thu · 2026-10-02</b>
-              </li>
-              <li>
-                <span>From</span>
-                <b>09:00</b>
-              </li>
-              <li>
-                <span>To</span>
-                <b>17:30</b>
-              </li>
-              <li>
-                <span>Venue</span>
-                <b>TCS Siruseri</b>
-              </li>
-            </ul>
-          }
+          detailBody={<CalendarDetail />}
           icon={
             <svg
               viewBox="0 0 24 24"
@@ -94,22 +78,7 @@ export default function SideRails() {
           onToggle={(x) => setOpenIcon(openIcon === x ? null : x)}
           label="Contact"
           detailTitle="On the day"
-          detailBody={
-            <ul className="rail-list">
-              <li>
-                <span>Reception</span>
-                <b>Ext. 1200</b>
-              </li>
-              <li>
-                <span>Guest desk</span>
-                <b>Ext. 1201</b>
-              </li>
-              <li>
-                <span>Logistics</span>
-                <b>Ext. 1250</b>
-              </li>
-            </ul>
-          }
+          detailBody={<ContactsDetail />}
           icon={
             <svg
               viewBox="0 0 24 24"
@@ -154,6 +123,73 @@ export default function SideRails() {
       <style jsx global>{railStyles}</style>
       {content}
     </>
+  );
+}
+
+// ---------------- Calendar + contacts ----------------
+
+function CalendarDetail() {
+  const now = useNow(1000);
+  const hours = dayHours(getAgendaRooms());
+  const date = (opts: Intl.DateTimeFormatOptions) =>
+    now == null ? "" : new Intl.DateTimeFormat("en-GB", { timeZone: IST, ...opts }).format(now);
+  return (
+    <ul className="rail-list">
+      <li>
+        <span>Event day</span>
+        <b>Thu · 8 Oct 2026</b>
+      </li>
+      {hours && (
+        <>
+          <li>
+            <span>From</span>
+            <b>{hours.from}</b>
+          </li>
+          <li>
+            <span>To</span>
+            <b>{hours.to}</b>
+          </li>
+        </>
+      )}
+      <li>
+        <span>Venue</span>
+        <b>TCS Siruseri</b>
+      </li>
+      <li>
+        <span>Today (IST)</span>
+        <b suppressHydrationWarning>
+          {date({ weekday: "short", day: "numeric", month: "short", year: "numeric" })}
+        </b>
+      </li>
+      <li>
+        <span>Time now</span>
+        <b className="tabular-nums" suppressHydrationWarning>
+          {date({ hour: "2-digit", minute: "2-digit", second: "2-digit", hour12: true })}
+        </b>
+      </li>
+    </ul>
+  );
+}
+
+function ContactsDetail() {
+  const contacts = getContacts();
+  if (contacts.length === 0) {
+    return <p style={{ margin: 0, fontSize: 12, color: "var(--muted)" }}>Contacts will be shared soon.</p>;
+  }
+  return (
+    <ul className="rail-list">
+      {contacts.map((c, i) => (
+        <li key={`${c.phone}-${i}`}>
+          <span>{c.role || c.name}</span>
+          <b>
+            {c.role && c.name ? `${c.name} · ` : ""}
+            <a href={`tel:${c.phone.replace(/[^\d+]/g, "")}`} style={{ color: "var(--pink)" }}>
+              {c.phone}
+            </a>
+          </b>
+        </li>
+      ))}
+    </ul>
   );
 }
 

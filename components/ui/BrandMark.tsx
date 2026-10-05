@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
+import NextSession from "@/components/ui/NextSession";
 import { journey, subscribeJourney } from "@/lib/journey";
 
 /**
@@ -78,6 +79,7 @@ export default function BrandMark() {
       >
         Sign out
       </button>
+      <NextSession />
     </div>
   );
 }

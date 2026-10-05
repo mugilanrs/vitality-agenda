@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
-import { setAgendaRooms } from "@/lib/agendaStore";
+import { setAgendaRooms, setProfile, type Contact } from "@/lib/agendaStore";
 import type { AgendaRoom } from "@/data/agendaRooms";
 import CampusScene from "@/components/campus/CampusScene";
 import CampusJourney, {
@@ -39,9 +39,14 @@ export default function Home() {
     fetch("/api/me", { cache: "no-store" })
       .then(async (res) => {
         if (!res.ok) throw new Error("unauthorised");
-        const data = (await res.json()) as { rooms: AgendaRoom[] };
+        const data = (await res.json()) as {
+          name: string;
+          rooms: AgendaRoom[];
+          contacts: Contact[];
+        };
         if (cancelled) return;
         setAgendaRooms(data.rooms);
+        setProfile(data.name, data.contacts);
         setReady(true);
       })
       .catch(() => {

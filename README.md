@@ -71,3 +71,6 @@ browser only receives the signed-in attendee's own rooms from `/api/me`.
 - The login attempt limiter is in-memory per serverless instance, so it only slows
   guessing; it is not a hard lockout.
 - Attendees, passwords and who attends what: `data/attendees.ts`, `data/agendaSource.ts`.
+
+### Contacts (phone icon)
+Add a `CONTACTS` environment variable in Vercel (Production + Preview): a JSON array, template in `.env.example`: `[{"role":"...","name":"...","phone":"+91 ..."}]`. Entries show as tap-to-call. Redeploy after changing it. Session times are treated as IST on 8 Oct 2026 (`lib/schedule.ts`).
