@@ -17,12 +17,19 @@ import { detectQuality, type QualitySettings } from "@/lib/quality";
 import { journey, subscribeJourney } from "@/lib/journey";
 import { useThemedMaterials } from "@/lib/themedMaterials";
 
+/**
+ * Depth haze: the campus sits in the clear, the surroundings fade into mist.
+ * Distances are view-space (orthographic), measured from the camera.
+ */
+const FOG_NEAR = 26;
+const FOG_FAR = 52;
+
 /** Keeps `scene.fog` + the GL clear colour in sync with the current theme. */
 function SkyTone({ colorHex }: { colorHex: number }) {
   const { scene, gl } = useThree();
   useEffect(() => {
     const col = new THREE.Color(colorHex);
-    scene.fog = new THREE.Fog(colorHex, 120, 240);
+    scene.fog = new THREE.Fog(colorHex, FOG_NEAR, FOG_FAR);
     gl.setClearColor(col, 1);
   }, [colorHex, scene, gl]);
   return null;
@@ -63,10 +70,10 @@ export default function CampusScene() {
   const useSoftShadows = quality.softShadows;
   const shadowMap = quality.shadowMap;
 
-  const skyColorHex = 0xf0eceb;
+  const skyColorHex = 0xb4d4e6;
   const styleBg = useMemo(
     () => ({
-      background: "linear-gradient(180deg, #f4f1ef 0%, #f0eceb 55%, #e8e4e3 100%)",
+      background: "linear-gradient(180deg, #cfe4f0 0%, #b4d4e6 55%, #9fc5dc 100%)",
     }),
     [],
   );
@@ -80,11 +87,11 @@ export default function CampusScene() {
           antialias: quality.tier !== "low",
           alpha: false,
           toneMapping: THREE.ACESFilmicToneMapping,
-          toneMappingExposure: 0.82,
+          toneMappingExposure: 1.25,
         }}
         style={styleBg}
         onCreated={({ scene, gl }) => {
-          scene.fog = new THREE.Fog(skyColorHex, 120, 240);
+          scene.fog = new THREE.Fog(skyColorHex, FOG_NEAR, FOG_FAR);
           gl.setClearColor(new THREE.Color(skyColorHex), 1);
         }}
       >
@@ -92,13 +99,13 @@ export default function CampusScene() {
           <SoftShadows size={12} samples={10} focus={0.85} />
         )}
 
-        <ambientLight intensity={0.24} color={"#efe6e2"} />
-        <hemisphereLight args={[0xf3eee9, 0xb7aaa4, 0.38]} />
+        <ambientLight intensity={0.4} color={"#e9eef2"} />
+        <hemisphereLight args={[0xe6f0f8, 0x9fb0a0, 0.45]} />
 
         <directionalLight
           position={[14, 24, 8]}
-          intensity={0.92}
-          color={"#fff6f2"}
+          intensity={1.35}
+          color={"#fff3e0"}
           castShadow
           shadow-mapSize-width={shadowMap}
           shadow-mapSize-height={shadowMap}
@@ -130,12 +137,12 @@ export default function CampusScene() {
 
             <ContactShadows
               position={[0, 0.02, 0]}
-              opacity={0.5}
+              opacity={0.35}
               scale={48}
               blur={2.4}
               far={5}
               resolution={quality.contactShadowsRes}
-              color={"#d8c8ce"}
+              color={"#18261c"}
             />
 
             <SpatialFocus />
