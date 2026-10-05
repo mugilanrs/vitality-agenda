@@ -101,7 +101,7 @@ export default function WelcomeIntro() {
           className="text-[12px] font-extrabold uppercase tracking-[0.24em]"
           style={{ color: "#9E0F48" }}
         >
-          A day across the TCS Siruseri
+          An AI-first day at TCS Siruseri
         </div>
         <h1
           className="font-display mt-2 text-5xl font-extrabold md:text-6xl"
