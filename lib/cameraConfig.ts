@@ -78,6 +78,21 @@ export function portraitOverviewBoost(aspect: number): number {
   return 1 + 0.22 * t;
 }
 
+/**
+ * Extra close-up for the campus overview on landscape screens. The campus is
+ * framed tighter (about 1.6x) so it dominates the view and the forest around
+ * it only frames it; the Airport and Fisherman Cove stay inside the frame.
+ * Phones/portrait keep the original framing (their horizontal frame is already
+ * capped), and very wide screens back off so the north/south stops are not
+ * clipped vertically.
+ */
+export function overviewCloseUp(aspect: number): number {
+  const t = Math.min(1, Math.max(0, (aspect - 0.8) / 0.5));
+  const smooth = t * t * (3 - 2 * t);
+  const wide = aspect > 1.6 ? 1.6 / aspect : 1;
+  return (1 + 0.625 * smooth) * wide;
+}
+
 /** True when the viewport is portrait (h > w). */
 export function isPortrait(width: number, height: number): boolean {
   return height > width;

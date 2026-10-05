@@ -12,6 +12,7 @@ import { journey } from "@/lib/journey";
 import {
   clampZoom,
   orthoBoundsForViewport,
+  overviewCloseUp,
   portraitOverviewBoost,
 } from "@/lib/cameraConfig";
 import type { CameraState } from "@/lib/camera";
@@ -52,9 +53,9 @@ function easeOutExpo(t: number) {
 
 const IDLE_MS = 3500;
 const OPEN_MS = 1700;
-// Starts wider than the settled overview (0.48) by the same ratio the
-// previous opening used, so the intro still pulls inward.
-const OPEN_ZOOM_START = 0.36;
+// The intro starts 25% wider than the settled overview and pulls inward
+// (same 0.36 / 0.48 ratio as before, now independent of the overview zoom).
+const OPEN_ZOOM_RATIO = 0.75;
 
 function focusCamera(): CameraState | null {
   const f = journey.focus;
@@ -127,8 +128,9 @@ export default function CampusCamera() {
       vPos.copy(vA).lerp(vB, f);
       vTarget.copy(tA).lerp(tB, f);
 
-      // Stop 0 is the overview; only it gets the portrait boost.
-      const boost = portraitOverviewBoost(size.width / size.height);
+      // Stop 0 is the overview; only it gets the portrait boost + landscape close-up.
+      const aspect = size.width / size.height;
+      const boost = portraitOverviewBoost(aspect) * overviewCloseUp(aspect);
       const zA = (a.zoom ?? 1) * (i0 === 0 ? boost : 1);
       const zB = (b.zoom ?? 1) * (i1 === 0 ? boost : 1);
       zTarget = clampZoom(zA + (zB - zA) * f);
@@ -140,7 +142,8 @@ export default function CampusCamera() {
       const elapsed = state.clock.elapsedTime * 1000 - openStart.current;
       const kOpen = clamp(elapsed / OPEN_MS, 0, 1);
       const e = easeOutExpo(kOpen);
-      zTarget = clampZoom(OPEN_ZOOM_START + (zTarget - OPEN_ZOOM_START) * e);
+      const zStart = zTarget * OPEN_ZOOM_RATIO;
+      zTarget = clampZoom(zStart + (zTarget - zStart) * e);
       const pull = (1 - e) * 3.0;
       vPos.y += pull;
       vPos.z += pull * 0.6;
