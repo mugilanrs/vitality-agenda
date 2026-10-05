@@ -3,7 +3,8 @@
  * refs so we don't allocate new MeshStandardMaterial per instance and so a
  * single theme edit propagates everywhere.
  *
- * Colours are tuned for clean daylight — no emissive, no bloom. The teal
+ * Colours follow the real campus: blue-teal glass, sand roofs, green lawns,
+ * teal water. Clean daylight — no emissive, no bloom. The teal
  * glass has enough metalness/roughness to catch the directional key light
  * without looking neon.
  */
@@ -11,40 +12,40 @@
 import * as THREE from "three";
 
 export const COLORS = {
-  whiteShell: "#EEE7EA",
-  whiteShellCool: "#DED3D8",
-  roofWhite: "#F5EFF1",
-  roofRim: "#C9BBC2",
-  tealGlass: "#D7DEDC",
-  tealGlassDeep: "#D5C8CE",
-  concreteLight: "#E2DDDF",
-  concreteWarm: "#D5C8CE",
-  roadDark: "#D0CBCE",
-  roadStripe: "#AAA4A7",
-  grass: "#D4DFD0",
-  grassDeep: "#C7D5C3",
-  waterTurquoise: "#D5DDDA",
-  waterDeep: "#C5D0CC",
+  whiteShell: "#CBD7DF",
+  whiteShellCool: "#BAC8D1",
+  roofWhite: "#C2B89E",
+  roofRim: "#8497A5",
+  tealGlass: "#4FA9CC",
+  tealGlassDeep: "#3688B3",
+  concreteLight: "#D0D0C6",
+  concreteWarm: "#B9B8AB",
+  roadDark: "#3D4249",
+  roadStripe: "#EDE9DB",
+  grass: "#66A24F",
+  grassDeep: "#478A3F",
+  waterTurquoise: "#34A097",
+  waterDeep: "#1E7F80",
   trunk: "#765845",
   leavesGreen: "#6FA276",
   palmGreen: "#8DB78D",
   blossomPink: "#E99AAE",
   solar: "#243046",
-  metalDark: "#C9BBC2",
-  ground: "#E8E4E3",
-  groundOutside: "#F0ECEB",
-  outsideMistPink: "#F0ECEB",
+  metalDark: "#6F808C",
+  ground: "#CCC7B2",
+  groundOutside: "#A3B58C",
+  outsideMistPink: "#B6C9C0",
   outsideBlockWhite: "#E4DFDC",
   outsidePathPink: "#BBB5B8",
-  eb3Shell: "#EAE3E6",
-  eb3Secondary: "#DCD1D6",
-  eb3Roof: "#F3EDEF",
-  eb3Struct: "#C8BAC1",
-  towerFacade: "#E7DEE3",
-  towerBand: "#C8BAC2",
-  towerGlass: "#D4DCDB",
-  towerRoof: "#F1EAED",
-  towerAccent: "#E39AAF",
+  eb3Shell: "#DCE3E7",
+  eb3Secondary: "#BCC9D1",
+  eb3Roof: "#C2B89E",
+  eb3Struct: "#8296A5",
+  towerFacade: "#E4E9EC",
+  towerBand: "#8FA7B8",
+  towerGlass: "#4A82A4",
+  towerRoof: "#2DB8D4",
+  towerAccent: "#BFE9F3",
 } as const;
 
 // ---------------- Shared material singletons ----------------
@@ -72,7 +73,7 @@ export const M_TEAL_GLASS = new THREE.MeshStandardMaterial({
   roughness: 0.22,
   metalness: 0.15,
   transparent: true,
-  opacity: 0.55,
+  opacity: 0.93,
   envMapIntensity: 0.75,
 });
 
@@ -82,7 +83,7 @@ export const M_TEAL_GLASS_DEEP = new THREE.MeshStandardMaterial({
   metalness: 0.15,
   envMapIntensity: 0.7,
   transparent: true,
-  opacity: 0.5,
+  opacity: 0.9,
 });
 
 // Highlight tint used when a building is hovered — very subtle emissive lift.
@@ -118,10 +119,10 @@ export const M_GRASS = new THREE.MeshStandardMaterial({
 
 export const M_WATER = new THREE.MeshStandardMaterial({
   color: COLORS.waterTurquoise,
-  roughness: 0.15,
-  metalness: 0.75,
+  roughness: 0.12,
+  metalness: 0.15,
   transparent: true,
-  opacity: 0.92,
+  opacity: 1,
   envMapIntensity: 1.1,
 });
 
@@ -172,7 +173,7 @@ export const M_TOWER_GLASS = new THREE.MeshStandardMaterial({
   roughness: 0.22,
   metalness: 0.12,
   transparent: true,
-  opacity: 0.72,
+  opacity: 0.95,
 });
 export const M_TOWER_ROOF = new THREE.MeshStandardMaterial({
   color: COLORS.towerRoof,
