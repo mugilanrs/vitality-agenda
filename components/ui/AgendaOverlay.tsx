@@ -2,11 +2,8 @@
 
 import { useEffect, useState } from "react";
 import { BUILDINGS, type BuildingSpec } from "@/data/buildings";
-import {
-  EB3_ROOM_CHOICES,
-  agendaRoomByFocus,
-  type AgendaRoom,
-} from "@/data/agendaRooms";
+import type { AgendaRoom } from "@/data/agendaRooms";
+import { agendaRoomByFocus, eb3RoomChoices } from "@/lib/agendaStore";
 import {
   journey,
   subscribeJourney,
@@ -220,7 +217,7 @@ function Eb3Chooser() {
         style={{ bottom: "6vh" }}
       >
         <div className="flex w-[min(96vw,880px)] flex-col gap-3 sm:flex-row">
-          {EB3_ROOM_CHOICES.map((room) => (
+          {eb3RoomChoices().map((room) => (
             <button
               key={room.id}
               type="button"

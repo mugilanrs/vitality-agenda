@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { INTERIOR_ORIGINS, type InteriorKey } from "@/data/buildings";
-import { agendaRoomByFocus } from "@/data/agendaRooms";
+import { agendaRoomByFocus } from "@/lib/agendaStore";
 import { journey, subscribeJourney } from "@/lib/journey";
 import { BoardRoomScene, DiningRoomScene, ODCScene } from "./RoomScenes";
 

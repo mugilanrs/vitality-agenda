@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { journey, subscribeJourney } from "@/lib/journey";
-import { STOPS, goToStop, stopIndexForFocus } from "@/lib/stops";
+import { getStops, goToStop, stopIndexForFocus } from "@/lib/stops";
 
 /**
  * Legacy-ported side rails:
@@ -132,7 +132,7 @@ export default function SideRails() {
         <div className="rail-card">
           <div className="rail-eyebrow">Navigate</div>
           <ul className="rail-jump">
-            {STOPS.map((stop, i) => (
+            {getStops().map((stop, i) => (
               <li key={stop.key} aria-current={i === currentStop || undefined}>
                 <button type="button" onClick={() => goToStop(i)}>
                   <span className="rn">{String(i + 1).padStart(2, "0")}</span>

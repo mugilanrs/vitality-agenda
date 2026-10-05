@@ -1,7 +1,8 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { MARKER_BUILDINGS, BUILDINGS } from "@/data/buildings";
+import { BUILDINGS } from "@/data/buildings";
+import { visibleMarkerBuildings } from "@/lib/agendaStore";
 import { journey, subscribeJourney } from "@/lib/journey";
 
 /**
@@ -24,7 +25,7 @@ export default function CampusHotspots() {
 
   return (
     <group visible={visible}>
-      {MARKER_BUILDINGS.map((id) => {
+      {visibleMarkerBuildings().map((id) => {
         const b = BUILDINGS[id];
         if (!b) return null;
         const [x, , z] = b.basePosition;

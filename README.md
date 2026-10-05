@@ -56,3 +56,15 @@ for a later pass: port into Next.js + Tailwind, richer building artwork, GSAP/Le
 smooth scroll, ambient audio, and real speaker/company data. Three.js/R3F only if
 true 3D camera depth is wanted — the current SVG approach covers the 2.5D look far
 more cheaply.
+
+## Login (per-attendee journeys)
+
+The site is behind a password page. Each attendee's password is their first name
+plus a shared suffix (default `@india2026`, e.g. `imraan@india2026`); the password
+decides which sessions and buildings they see. Attendee names are never shown in
+the UI, and the full timetable lives server-side in `data/agendaSource.ts` — the
+browser only receives the signed-in attendee's own rooms from `/api/me`.
+
+- Set `SESSION_SECRET` in production (see `.env.example`).
+- Needs a Node server (`next start` / Vercel), not a static export.
+- Attendees, passwords and who attends what: `data/attendees.ts`, `data/agendaSource.ts`.

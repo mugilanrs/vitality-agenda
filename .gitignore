@@ -7,3 +7,8 @@ dist
 # build output
 /.next/
 *.tsbuildinfo
+
+# local secrets
+.env
+.env.local
+.env.*.local

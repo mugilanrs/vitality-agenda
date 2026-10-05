@@ -1,6 +1,9 @@
 "use client";
 
-import { useRef } from "react";
+import { useEffect, useRef, useState } from "react";
+import { useRouter } from "next/navigation";
+import { setAgendaRooms } from "@/lib/agendaStore";
+import type { AgendaRoom } from "@/data/agendaRooms";
 import CampusScene from "@/components/campus/CampusScene";
 import CampusJourney, {
   type JourneyHandle,
@@ -26,6 +29,37 @@ import WebGLBoundary from "@/components/ui/WebGLBoundary";
  */
 export default function Home() {
   const journeyRef = useRef<JourneyHandle | null>(null);
+  const router = useRouter();
+  const [ready, setReady] = useState(false);
+
+  // Load the signed-in attendee's own rooms before anything is drawn; without
+  // a valid session, go to the login page.
+  useEffect(() => {
+    let cancelled = false;
+    fetch("/api/me", { cache: "no-store" })
+      .then(async (res) => {
+        if (!res.ok) throw new Error("unauthorised");
+        const data = (await res.json()) as { rooms: AgendaRoom[] };
+        if (cancelled) return;
+        setAgendaRooms(data.rooms);
+        setReady(true);
+      })
+      .catch(() => {
+        if (!cancelled) router.replace("/login");
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, [router]);
+
+  if (!ready) {
+    return (
+      <div
+        className="fixed inset-0"
+        style={{ background: "linear-gradient(180deg, #FBE8D2, #F2C2D6)" }}
+      />
+    );
+  }
 
   return (
     <>

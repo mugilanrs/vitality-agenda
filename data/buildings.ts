@@ -104,6 +104,7 @@ export const INTERIOR_ORIGINS = {
   "eb3::0::odc": [80, 1.4, 0] as const,
   "eb3::1::board-am": [80, 1.4, 14] as const,
   "eb3::2::board-pm": [80, 1.4, 28] as const,
+  "eb5::0::account-room": [80, 1.4, 42] as const,
   "signature-tower::0::executive-dining": [140, 1.4, 0] as const,
 } as const;
 
@@ -156,14 +157,37 @@ export const BUILDING_A = makeBlock(
   "rear",
   [],
 );
-export const BUILDING_B = makeBlock(
-  "block-b",
-  "Engineering Studios",
-  "Platform & Delivery",
-  "left",
-  "middle",
-  [],
-);
+// EB5 — left side, second block from the Signature Tower. Direct entry to
+// the Account Room (no floor picker).
+export const BUILDING_B: BuildingSpec = {
+  ...makeBlock(
+    "eb5",
+    "EB5",
+    "Account Room",
+    "left",
+    "middle",
+    [
+      {
+        index: 0,
+        label: "Account Room",
+        name: "Account Room",
+        camera: fromTarget([-BLOCK_X, 0.75, BLOCK_ROWS.middle], 2.6),
+        rooms: [
+          {
+            id: "account-room",
+            name: "Account Room",
+            session: "TCS AI in Action",
+            host: "Hosts",
+            time: "3:00 PM — 3:45 PM",
+            capacity: "Level 3 AI Autonomy",
+            interior: interiorFrame(INTERIOR_ORIGINS["eb5::0::account-room"]),
+          },
+        ],
+      },
+    ],
+  ),
+  directEntry: true,
+};
 export const BUILDING_C = makeBlock(
   "block-c",
   "Design Lab",
@@ -306,7 +330,7 @@ export const BUILDING_SIGNATURE_TOWER: BuildingSpec = {
 
 export const BUILDINGS: Record<BuildingId, BuildingSpec> = {
   "block-a": BUILDING_A,
-  "block-b": BUILDING_B,
+  eb5: BUILDING_B,
   "block-c": BUILDING_C,
   "block-d": BUILDING_D,
   "block-e": BUILDING_E,
@@ -319,7 +343,7 @@ export const BUILDINGS: Record<BuildingId, BuildingSpec> = {
 /** Reading order for the scroll tour (six primary blocks only). */
 export const BUILDING_ORDER: BuildingId[] = [
   "block-a",
-  "block-b",
+  "eb5",
   "block-c",
   "block-d",
   "block-e",
@@ -329,6 +353,7 @@ export const BUILDING_ORDER: BuildingId[] = [
 /** Buildings that carry an interactive marker on the main campus view. */
 export const MARKER_BUILDINGS: BuildingId[] = [
   "eb3",
+  "eb5",
   "signature-tower",
   "airport",
   "fisherman-cove",

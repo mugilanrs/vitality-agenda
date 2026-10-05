@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { journey, subscribeJourney } from "@/lib/journey";
-import { STOPS, goToStop, stopIndexForFocus } from "@/lib/stops";
+import { getStops, goToStop, stopIndexForFocus } from "@/lib/stops";
 
 /**
  * Floating "Previous room / Next room" buttons on the right edge. They walk the
@@ -14,12 +14,18 @@ export default function StopNav({ docked = false }: { docked?: boolean }) {
   useEffect(() => {
     const apply = () => setIndex(stopIndexForFocus(journey.focus));
     apply();
-    return subscribeJourney(apply, "focus");
+    const offFocus = subscribeJourney(apply, "focus");
+    const offSession = subscribeJourney(apply, "session");
+    return () => {
+      offFocus();
+      offSession();
+    };
   }, []);
 
   if (index < 0) return null;
-  const prev = STOPS[index - 1];
-  const next = STOPS[index + 1];
+  const stops = getStops();
+  const prev = stops[index - 1];
+  const next = stops[index + 1];
   if (!prev && !next) return null;
 
   return (

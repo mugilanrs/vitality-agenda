@@ -1,13 +1,13 @@
 "use client";
 
-import { STOPS, goToStop } from "@/lib/stops";
+import { getStops, goToStop } from "@/lib/stops";
+import { visibleMarkerBuildings } from "@/lib/agendaStore";
 import { Html } from "@react-three/drei";
 import { useFrame, useThree } from "@react-three/fiber";
 import { useEffect, useMemo, useRef, useState } from "react";
 import * as THREE from "three";
 import {
   BUILDINGS,
-  MARKER_BUILDINGS,
   type BuildingSpec,
 } from "@/data/buildings";
 import {
@@ -131,7 +131,7 @@ function mobileLabel(id: string, full: string): string {
 
 function activate(building: BuildingSpec) {
   if (building.id === "fisherman-cove") {
-    goToStop(STOPS.findIndex((s) => s.key === "fisherman-cove"));
+    goToStop(getStops().findIndex((s) => s.agendaRoomId === "fisherman-cove-dinner"));
     return;
   }
   if (building.directEntry && building.floors.length === 1 && building.floors[0].rooms.length === 1) {
@@ -173,7 +173,7 @@ export default function SpatialTiles() {
 
   return (
     <group>
-      {markersReady && MARKER_BUILDINGS.map((id, i) => {
+      {markersReady && visibleMarkerBuildings().map((id, i) => {
         const b = BUILDINGS[id];
         if (!b) return null;
         return (
@@ -183,7 +183,7 @@ export default function SpatialTiles() {
             building={b}
             reveal={visible}
             icon={
-              id === "eb3"
+              id === "eb3" || id === "eb5"
                 ? "board"
                 : id === "airport"
                   ? "plane"

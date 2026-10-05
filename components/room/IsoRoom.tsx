@@ -1216,7 +1216,7 @@ function PeopleList({ names }: { names?: readonly string[] }) {
 }
 
 function peopleHeading(room: AgendaRoom, names?: readonly string[]) {
-  return room.peopleLabel ?? ((names?.length ?? 0) > 1 ? "Speakers" : "Speaker");
+  return room.peopleLabel ?? ((names?.length ?? 0) > 1 ? "Hosts" : "Host");
 }
 
 function startTime(time: string) {
@@ -1415,7 +1415,7 @@ export default function IsoRoom({
       : room.buildingId === "fisherman-cove"
         ? "Fisherman Cove · Dinner Pavilion"
       : room.buildingId === "eb5"
-        ? "EB5 · H&M ODC"
+        ? "EB5 · Account Room"
         : `EB3 · ${room.name}`;
 
   return (
