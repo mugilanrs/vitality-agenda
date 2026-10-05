@@ -119,24 +119,36 @@ export default function JourneyShell({
           align-items: center;
           justify-content: center;
           padding: 40px;
-          background: linear-gradient(180deg, #fff6ee, #fbe3ec);
+          background: #fffaf5;
           overflow-y: auto;
         }
         .js-panel {
           width: min(380px, 100%);
         }
-        .js-lock {
-          width: 52px;
-          height: 52px;
-          border-radius: 16px;
+        .js-brand {
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          font-size: 11px;
+          font-weight: 700;
+          letter-spacing: 0.16em;
+          text-transform: uppercase;
+          color: #16203a;
+        }
+        .js-brand span:last-child {
+          color: #8b7a86;
+          letter-spacing: 0.1em;
+        }
+        .js-brand i {
+          display: inline-block;
+          width: 8px;
+          height: 8px;
+          border-radius: 50%;
           background: #d81b60;
-          display: grid;
-          place-items: center;
-          color: #fff;
-          box-shadow: 0 10px 24px rgba(216, 27, 96, 0.35);
+          margin-right: 8px;
         }
         .js-eyebrow {
-          margin-top: 22px;
+          margin-top: 34px;
           font-size: 12px;
           letter-spacing: 0.22em;
           text-transform: uppercase;
@@ -160,13 +172,22 @@ export default function JourneyShell({
           margin-top: 14px;
           padding: 15px;
           border-radius: 14px;
-          background: #d81b60;
+          background: #16203a;
           color: #fff;
           font-weight: 700;
           font-size: 15px;
-          box-shadow: 0 10px 24px rgba(216, 27, 96, 0.3);
+          box-shadow: 0 10px 22px rgba(22, 32, 58, 0.22);
           border: 0;
           cursor: pointer;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          gap: 8px;
+          transition: transform 0.15s ease, background 0.15s ease;
+        }
+        .js-btn:hover:not(:disabled) {
+          background: #d81b60;
+          transform: translateY(-1px);
         }
         .js-btn:disabled {
           opacity: 0.6;
@@ -176,6 +197,40 @@ export default function JourneyShell({
           margin-top: 16px;
           font-size: 12px;
           color: #8b7a86;
+        }
+        .js-label {
+          display: block;
+          margin-top: 26px;
+          font-size: 11px;
+          font-weight: 700;
+          letter-spacing: 0.16em;
+          text-transform: uppercase;
+          color: #5a4f5c;
+        }
+        .js-facts {
+          display: flex;
+          margin-top: 28px;
+          padding-top: 18px;
+          border-top: 1px solid #ecd9e1;
+        }
+        .js-facts div {
+          flex: 1;
+          font-size: 10px;
+          letter-spacing: 0.14em;
+          text-transform: uppercase;
+          color: #9a8a95;
+        }
+        .js-facts div + div {
+          padding-left: 14px;
+          border-left: 1px solid #ecd9e1;
+        }
+        .js-facts b {
+          display: block;
+          margin-top: 4px;
+          font-size: 13px;
+          letter-spacing: 0;
+          text-transform: none;
+          color: #16203a;
         }
         @media (max-width: 760px) {
           .js-shell {
@@ -194,7 +249,21 @@ export default function JourneyShell({
           .js-side {
             flex: 1;
             align-items: flex-start;
-            padding: 24px;
+            padding: 26px 24px 24px;
+            margin-top: -26px;
+            position: relative;
+            z-index: 3;
+            border-radius: 28px 28px 0 0;
+            box-shadow: 0 -12px 30px rgba(22, 32, 58, 0.18);
+          }
+          .js-eyebrow {
+            margin-top: 22px;
+          }
+          .js-label {
+            margin-top: 20px;
+          }
+          .js-facts {
+            margin-top: 22px;
           }
           .js-title {
             font-size: 34px;

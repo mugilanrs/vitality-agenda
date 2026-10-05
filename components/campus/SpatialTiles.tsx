@@ -99,7 +99,9 @@ function pillHalfSize(isMobile: boolean, id: string) {
  */
 function preferredOffset(building: BuildingSpec, isMobile: boolean) {
   if (building.id === "signature-tower") {
-    return { dx: 0, dy: isMobile ? 42 : 56 };
+    // Phones: EB3 / EB5 pills sit just below the tower, so put its pill above
+    // the crown instead of letting it land on them.
+    return { dx: 0, dy: isMobile ? -34 : 56 };
   }
   // Hotel sits at the top of the overview — keep the pill below the roof.
   // Airport sits at the bottom — keep the pill above the terminal.
@@ -295,7 +297,8 @@ function Marker({
     // so each pill only yields to the ones already placed this frame. If it
     // overlaps one, nudge it vertically away from that pill's centre.
     const GAP = 6;
-    for (const [otherId, o] of placedPills) {
+    // Two passes: resolving one overlap can push the pill onto another.
+    for (const [otherId, o] of [...placedPills, ...placedPills]) {
       if (otherId === building.id || o.index > index) continue;
       const overlapX = Math.abs(tx - o.x) < halfW + o.halfW + GAP;
       const overlapY = Math.abs(ty - o.y) < halfH + o.halfH + GAP;
