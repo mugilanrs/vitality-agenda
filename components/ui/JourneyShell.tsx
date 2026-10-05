@@ -172,11 +172,11 @@ export default function JourneyShell({
           margin-top: 14px;
           padding: 15px;
           border-radius: 14px;
-          background: #16203a;
+          background: #d81b60;
           color: #fff;
           font-weight: 700;
           font-size: 15px;
-          box-shadow: 0 10px 22px rgba(22, 32, 58, 0.22);
+          box-shadow: 0 10px 24px rgba(216, 27, 96, 0.3);
           border: 0;
           cursor: pointer;
           display: flex;
@@ -186,7 +186,7 @@ export default function JourneyShell({
           transition: transform 0.15s ease, background 0.15s ease;
         }
         .js-btn:hover:not(:disabled) {
-          background: #d81b60;
+          background: #b8134f;
           transform: translateY(-1px);
         }
         .js-btn:disabled {
@@ -250,11 +250,6 @@ export default function JourneyShell({
             flex: 1;
             align-items: flex-start;
             padding: 26px 24px 24px;
-            margin-top: -26px;
-            position: relative;
-            z-index: 3;
-            border-radius: 28px 28px 0 0;
-            box-shadow: 0 -12px 30px rgba(22, 32, 58, 0.18);
           }
           .js-eyebrow {
             margin-top: 22px;
