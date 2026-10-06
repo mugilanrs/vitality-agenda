@@ -9,6 +9,7 @@ import CampusArchitecture from "./CampusArchitecture";
 import FishermanCove from "./FishermanCove";
 import AirportDestination from "./AirportDestination";
 import JourneyRoutes from "./JourneyRoutes";
+import CarTraffic from "./CarTraffic";
 import CampusHotspots from "./CampusHotspots";
 import SpatialFocus from "./SpatialFocus";
 import SpatialTiles from "./SpatialTiles";
@@ -132,6 +133,7 @@ export default function CampusScene() {
           <group visible={!inside}>
             <CampusArchitecture />
             <JourneyRoutes />
+            <CarTraffic />
             <FishermanCove />
             <AirportDestination />
 
