@@ -131,7 +131,7 @@ export default function FishermanCove() {
       <MiniTree position={[4.8, 0, 2.2]} />
       <MiniTree position={[-3.4, 0, -2.3]} />
       <MiniTree position={[3.6, 0, -2.15]} />
-      <MiniTree position={[0.2, 0, 3.6]} />
+      <MiniTree position={[-2.1, 0, 3.5]} />
     </group>
   );
 }

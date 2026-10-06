@@ -45,7 +45,7 @@ function buildTrees(keep: number) {
       if (d < R_MIN || d > R_MAX) continue;
       if (Math.hypot(x - cx, z - cz) < 7.6) continue;
       if (Math.hypot(x - ax, z - az) < 9.5) continue;
-      if (Math.abs(x) < 1.1 && Math.abs(z) < 25) continue;
+      if (Math.abs(x) < 2.1 && Math.abs(z) < 25) continue;
       out.push({
         x,
         z,

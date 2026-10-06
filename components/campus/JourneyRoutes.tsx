@@ -2,26 +2,29 @@
 
 import { useMemo } from "react";
 import * as THREE from "three";
-import {
-  AIRPORT_POSITION,
-  CAMPUS_EDGE,
-  FISHERMAN_COVE_POSITION,
-} from "@/data/externalDestinations";
+import { COLORS } from "@/lib/materials";
+import { NORTH_ROAD, ROAD_WIDTH, SOUTH_ROAD } from "@/data/roadRoutes";
 
 /**
- * Narrative paths that meet the campus boundary and stop there.
- * North path → Fisherman Cove. South path → Airport.
- * They do not enter the campus or cross its buildings.
+ * The two roads that leave the campus: south to the Airport, north to
+ * Fisherman Cove. Each is a real asphalt road — pale kerb, dark carriageway,
+ * dashed white centre line and thin pink edge lines — that joins the existing
+ * boulevard / ring road and passes through an opening in the perimeter wall.
+ * Centre lines live in data/roadRoutes.ts (shared with the traffic).
  */
 
-function ribbonGeometry(
-  points: readonly (readonly [number, number])[],
-  width: number,
-) {
-  const curve = new THREE.CatmullRomCurve3(
+const SAMPLES = 40;
+const Y = 0.07;
+
+function curveFor(points: readonly (readonly [number, number])[]) {
+  return new THREE.CatmullRomCurve3(
     points.map(([x, z]) => new THREE.Vector3(x, 0, z)),
   );
-  const samples = curve.getPoints(28);
+}
+
+/** Flat ribbon along the curve, `offset` to the side of the centre line. */
+function ribbonGeometry(curve: THREE.CatmullRomCurve3, width: number, offset = 0) {
+  const samples = curve.getPoints(SAMPLES);
   const positions: number[] = [];
   const indices: number[] = [];
   for (let i = 0; i < samples.length; i++) {
@@ -32,11 +35,12 @@ function ribbonGeometry(
     const len = Math.hypot(dx, dz) || 1;
     dx /= len;
     dz /= len;
-    const px = -dz * width * 0.5;
-    const pz = dx * width * 0.5;
-    const y = 0.07;
-    positions.push(samples[i].x + px, y, samples[i].z + pz);
-    positions.push(samples[i].x - px, y, samples[i].z - pz);
+    const nx = -dz;
+    const nz = dx;
+    const cx = samples[i].x + nx * offset;
+    const cz = samples[i].z + nz * offset;
+    positions.push(cx + nx * width * 0.5, Y, cz + nz * width * 0.5);
+    positions.push(cx - nx * width * 0.5, Y, cz - nz * width * 0.5);
     if (i < samples.length - 1) {
       const a = i * 2;
       indices.push(a, a + 1, a + 2, a + 1, a + 3, a + 2);
@@ -49,63 +53,85 @@ function ribbonGeometry(
   return geom;
 }
 
-function boundaryToward(x: number, z: number): [number, number] {
-  const len = Math.hypot(x, z) || 1;
-  return [(x / len) * CAMPUS_EDGE, (z / len) * CAMPUS_EDGE];
+/** Dashed centre line: short quads laid along the curve in one geometry. */
+function dashGeometry(curve: THREE.CatmullRomCurve3, dash = 0.2, gap = 0.2, width = 0.06) {
+  const total = curve.getLength();
+  const step = dash + gap;
+  const positions: number[] = [];
+  const indices: number[] = [];
+  for (let d = gap; d + dash < total; d += step) {
+    const a = curve.getPointAt(d / total);
+    const b = curve.getPointAt((d + dash) / total);
+    let dx = b.x - a.x;
+    let dz = b.z - a.z;
+    const len = Math.hypot(dx, dz) || 1;
+    dx /= len;
+    dz /= len;
+    const nx = -dz * width * 0.5;
+    const nz = dx * width * 0.5;
+    const i = positions.length / 3;
+    positions.push(a.x + nx, Y, a.z + nz, a.x - nx, Y, a.z - nz);
+    positions.push(b.x + nx, Y, b.z + nz, b.x - nx, Y, b.z - nz);
+    indices.push(i, i + 1, i + 2, i + 1, i + 3, i + 2);
+  }
+  const geom = new THREE.BufferGeometry();
+  geom.setAttribute("position", new THREE.Float32BufferAttribute(positions, 3));
+  geom.setIndex(indices);
+  geom.computeVertexNormals();
+  return geom;
 }
 
-function bowed(
-  a: readonly [number, number],
-  b: readonly [number, number],
-  bulge: number,
-): [number, number][] {
-  const mx = (a[0] + b[0]) / 2;
-  const mz = (a[1] + b[1]) / 2;
-  let dx = b[0] - a[0];
-  let dz = b[1] - a[1];
-  const len = Math.hypot(dx, dz) || 1;
-  dx /= len;
-  dz /= len;
-  return [a as [number, number], [mx + -dz * bulge, mz + dx * bulge], b as [number, number]];
+function buildRoad(points: readonly (readonly [number, number])[]) {
+  const curve = curveFor(points);
+  return {
+    kerb: ribbonGeometry(curve, ROAD_WIDTH + 0.26),
+    asphalt: ribbonGeometry(curve, ROAD_WIDTH),
+    edgeL: ribbonGeometry(curve, 0.05, ROAD_WIDTH / 2 - 0.07),
+    edgeR: ribbonGeometry(curve, 0.05, -(ROAD_WIDTH / 2 - 0.07)),
+    dashes: dashGeometry(curve),
+  };
+}
+
+type RoadGeometry = ReturnType<typeof buildRoad>;
+
+const layer = (n: number) => ({
+  polygonOffset: true,
+  polygonOffsetFactor: -n,
+  polygonOffsetUnits: -n,
+});
+
+function Road({ geometry }: { geometry: RoadGeometry }) {
+  return (
+    <group>
+      <mesh geometry={geometry.kerb} receiveShadow>
+        <meshStandardMaterial color={"#e6e0d1"} roughness={1} side={THREE.DoubleSide} {...layer(6)} />
+      </mesh>
+      <mesh geometry={geometry.asphalt} receiveShadow>
+        <meshStandardMaterial color={COLORS.roadDark} roughness={0.95} side={THREE.DoubleSide} {...layer(7)} />
+      </mesh>
+      <mesh geometry={geometry.edgeL}>
+        <meshBasicMaterial color={"#EE5A8F"} side={THREE.DoubleSide} {...layer(8)} />
+      </mesh>
+      <mesh geometry={geometry.edgeR}>
+        <meshBasicMaterial color={"#EE5A8F"} side={THREE.DoubleSide} {...layer(8)} />
+      </mesh>
+      <mesh geometry={geometry.dashes}>
+        <meshStandardMaterial color={COLORS.roadStripe} roughness={0.7} side={THREE.DoubleSide} {...layer(9)} />
+      </mesh>
+    </group>
+  );
 }
 
 export default function JourneyRoutes() {
-  const geometry = useMemo(() => {
-    const hotelDoor: [number, number] = [
-      FISHERMAN_COVE_POSITION[0],
-      FISHERMAN_COVE_POSITION[2] + 3.4,
-    ];
-    const northEdge = boundaryToward(hotelDoor[0], hotelDoor[1]);
-    const airportDoor: [number, number] = [
-      AIRPORT_POSITION[0],
-      AIRPORT_POSITION[2] - 3.2,
-    ];
-    const southEdge = boundaryToward(0, 1);
-
-    const northPts = bowed(northEdge, hotelDoor, 0.85);
-    const southPts = bowed(southEdge, airportDoor, -1.1);
-    return {
-      north: ribbonGeometry(northPts, 0.7),
-      south: ribbonGeometry(southPts, 0.7),
-      northLine: ribbonGeometry(northPts, 0.14),
-      southLine: ribbonGeometry(southPts, 0.14),
-    };
-  }, []);
+  const roads = useMemo(
+    () => ({ south: buildRoad(SOUTH_ROAD), north: buildRoad(NORTH_ROAD) }),
+    [],
+  );
 
   return (
     <group>
-      <mesh geometry={geometry.north} receiveShadow>
-        <meshStandardMaterial color={"#d9d2c2"} roughness={1} side={THREE.DoubleSide} polygonOffset polygonOffsetFactor={-6} polygonOffsetUnits={-6} />
-      </mesh>
-      <mesh geometry={geometry.south} receiveShadow>
-        <meshStandardMaterial color={"#d9d2c2"} roughness={1} side={THREE.DoubleSide} polygonOffset polygonOffsetFactor={-6} polygonOffsetUnits={-6} />
-      </mesh>
-      <mesh geometry={geometry.northLine} position={[0, 0.015, 0]}>
-        <meshBasicMaterial color={"#EE5A8F"} transparent opacity={1} side={THREE.DoubleSide} polygonOffset polygonOffsetFactor={-8} polygonOffsetUnits={-8} />
-      </mesh>
-      <mesh geometry={geometry.southLine} position={[0, 0.015, 0]}>
-        <meshBasicMaterial color={"#EE5A8F"} transparent opacity={1} side={THREE.DoubleSide} polygonOffset polygonOffsetFactor={-8} polygonOffsetUnits={-8} />
-      </mesh>
+      <Road geometry={roads.south} />
+      <Road geometry={roads.north} />
     </group>
   );
 }

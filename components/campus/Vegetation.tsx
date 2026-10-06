@@ -175,6 +175,13 @@ function palmPositions() {
   return arr;
 }
 
+/** The south boulevard and the north cove road run through the tree rings. */
+function onRoadCorridor(x: number, z: number) {
+  if (z > 10 && Math.abs(x) < 1.5) return true;
+  if (z < -10 && Math.abs(x - 0.55) < 1.6) return true;
+  return false;
+}
+
 function broadleafPositions() {
   const arr: [number, number, number, number][] = [];
   // Dense outer perimeter ring — inside the fog radius
@@ -184,7 +191,10 @@ function broadleafPositions() {
     const jitter = (seed / 100) * 0.9;
     const r = 14.3 + jitter;
     const rz = 12.2 + jitter * 0.8;
-    arr.push([Math.cos(a) * r, 0, Math.sin(a) * rz, (seed / 100) * Math.PI * 2]);
+    const x = Math.cos(a) * r;
+    const z = Math.sin(a) * rz;
+    if (onRoadCorridor(x, z)) continue;
+    arr.push([x, 0, z, (seed / 100) * Math.PI * 2]);
   }
   // Grass-island clusters between the spine and the ring road
   const spots: [number, number][] = [
@@ -213,7 +223,10 @@ function narrowPositions() {
     const jitter = (seed / 100) * 0.7;
     const r = 15.4 + jitter;
     const rz = 13.1 + jitter * 0.6;
-    arr.push([Math.cos(a) * r, 0, Math.sin(a) * rz, (seed / 100) * Math.PI * 2]);
+    const x = Math.cos(a) * r;
+    const z = Math.sin(a) * rz;
+    if (onRoadCorridor(x, z)) continue;
+    arr.push([x, 0, z, (seed / 100) * Math.PI * 2]);
   }
   return arr;
 }

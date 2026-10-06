@@ -3,6 +3,7 @@
 import { useMemo } from "react";
 import * as THREE from "three";
 import { decal } from "@/lib/decals";
+import { NORTH_GATE_X, SOUTH_GATE_X } from "@/data/roadRoutes";
 import {
   M_WHITE_SHELL,
   M_ROOF_WHITE,
@@ -30,10 +31,20 @@ const WALL_THICKNESS = 0.14;
 // θ = π/2 is due south (+z), so the gap is centered there.
 const GAP_HALF = 0.28; // ~16°
 
+// North gate: a narrower opening where the Fisherman Cove road leaves the wall.
+const NORTH_GAP_CENTER = Math.atan2(-CAMPUS_RADIUS, NORTH_GATE_X);
+const NORTH_GAP_HALF = 0.12;
+
+function angleGap(angle: number, center: number) {
+  return Math.abs(Math.atan2(Math.sin(angle - center), Math.cos(angle - center)));
+}
+
 function isInsideGap(angle: number) {
-  // Normalize the gap around θ = π/2 (south, +z)
-  const diff = Math.atan2(Math.sin(angle - Math.PI / 2), Math.cos(angle - Math.PI / 2));
-  return Math.abs(diff) < GAP_HALF;
+  // South gap, centred on θ = π/2 (+z), and the north gate gap.
+  return (
+    angleGap(angle, Math.PI / 2) < GAP_HALF ||
+    angleGap(angle, NORTH_GAP_CENTER) < NORTH_GAP_HALF
+  );
 }
 
 export default function CampusPerimeter() {
@@ -105,25 +116,34 @@ export default function CampusPerimeter() {
           </mesh>
         ))}
 
-      {/* South entrance gate */}
-      <EntranceGate />
+      {/* South entrance gate, and a smaller north gate for the cove road */}
+      <EntranceGate position={[SOUTH_GATE_X, 0, CAMPUS_RADIUS]} />
+      <EntranceGate position={[NORTH_GATE_X, 0, -CAMPUS_RADIUS]} rotationY={Math.PI} scale={0.9} />
     </group>
   );
 }
 
 /**
- * Architectural entrance gate at the south edge (facing +z).
+ * Architectural entrance gate on the perimeter (facing outward).
  * Two piers + a light cantilevered canopy + a TCS mark on the entrance wall.
+ * The roadway between the piers is left open.
  */
-function EntranceGate() {
-  const gateZ = CAMPUS_RADIUS; // sits on the perimeter
+function EntranceGate({
+  position,
+  rotationY = 0,
+  scale = 1,
+}: {
+  position: [number, number, number];
+  rotationY?: number;
+  scale?: number;
+}) {
   const pierGap = 3.2;
   const pierWidth = 0.42;
   const pierDepth = 0.9;
   const pierHeight = 1.6;
 
   return (
-    <group position={[0, 0, gateZ]}>
+    <group position={position} rotation={[0, rotationY, 0]} scale={scale}>
       {/* Left pier */}
       <mesh
         castShadow
@@ -172,13 +192,16 @@ function EntranceGate() {
         <boxGeometry args={[pierGap + pierWidth * 2 + 0.35, 0.015, pierDepth + 0.45]} />
       </mesh>
 
-      {/* Rear glass wall behind the gate — reads as a security kiosk pane */}
-      <mesh
-        position={[0, pierHeight * 0.55, -pierDepth / 2 - 0.02]}
-        material={M_TEAL_GLASS}
-      >
-        <boxGeometry args={[pierGap - 0.1, pierHeight * 0.75, 0.04]} />
-      </mesh>
+      {/* Glass kiosk panes beside each pier — the roadway between stays open */}
+      {[-1, 1].map((sd) => (
+        <mesh
+          key={sd}
+          position={[sd * (pierGap / 2 - 0.55), pierHeight * 0.55, -pierDepth / 2 - 0.02]}
+          material={M_TEAL_GLASS}
+        >
+          <boxGeometry args={[0.7, pierHeight * 0.75, 0.04]} />
+        </mesh>
+      ))}
 
       {/* TCS mark strip — thin pink accent line on the canopy edge */}
       <mesh position={[0, pierHeight + 0.32, pierDepth / 2 + 0.02]}>
