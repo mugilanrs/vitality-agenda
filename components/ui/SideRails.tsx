@@ -10,7 +10,8 @@ import { useNow } from "@/lib/useNow";
 /**
  * Legacy-ported side rails:
  *   left  — small round icon buttons that pop a detail card (calendar, phone)
- *   right — one "Navigate" card: every stop in visiting order, with times
+ *   right — a Navigate icon (closed by default) that opens one card: every
+ *           stop in visiting order, with times
  *
  * On desktop both rails are fixed to the viewport mid-height. On tablet /
  * mobile they fold into a slide-up sheet toggled by an "Info & options" pill
@@ -23,6 +24,8 @@ export default function SideRails() {
   const [welcome, setWelcome] = useState(journey.welcome);
   const [focus, setFocusState] = useState(() => ({ ...journey.focus }));
   const [openIcon, setOpenIcon] = useState<string | null>(null);
+  // The Navigate card starts closed on every screen size.
+  const [navOpen, setNavOpen] = useState(false);
 
   useEffect(() => {
     const applyW = () => setWelcome(journey.welcome);
@@ -96,24 +99,59 @@ export default function SideRails() {
         />
       </div>
 
-      {/* ------- Right rail: one navigation card ------- */}
-      <div className="rail rail-right pointer-events-none">
-        <div className="rail-card">
-          <div className="rail-eyebrow">Navigate</div>
-          <ul className="rail-jump">
-            {getStops().map((stop, i) => (
-              <li key={stop.key} aria-current={i === currentStop || undefined}>
-                <button type="button" onClick={() => goToStop(i)}>
-                  <span className="rn">{String(i + 1).padStart(2, "0")}</span>
-                  <span className="rtxt">
-                    <span className="rnm">{stop.label}</span>
-                    {stop.meta && <span className="rmeta">{stop.meta}</span>}
-                  </span>
-                </button>
-              </li>
-            ))}
-          </ul>
-        </div>
+      {/* ------- Right rail: navigation icon, opens the stop list ------- */}
+      <div className={`rail rail-right pointer-events-none${navOpen ? "" : " closed"}`}>
+        {navOpen ? (
+          <div className="rail-card">
+            <div className="rail-head">
+              <div className="rail-eyebrow">Navigate</div>
+              <button
+                type="button"
+                className="rail-close"
+                aria-label="Close navigation"
+                onClick={() => setNavOpen(false)}
+              >
+                <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round">
+                  <path d="M6 6l12 12M18 6L6 18" />
+                </svg>
+              </button>
+            </div>
+            <ul className="rail-jump">
+              {getStops().map((stop, i) => (
+                <li key={stop.key} aria-current={i === currentStop || undefined}>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setNavOpen(false);
+                      goToStop(i);
+                    }}
+                  >
+                    <span className="rn">{String(i + 1).padStart(2, "0")}</span>
+                    <span className="rtxt">
+                      <span className="rnm">{stop.label}</span>
+                      {stop.meta && <span className="rmeta">{stop.meta}</span>}
+                    </span>
+                  </button>
+                </li>
+              ))}
+            </ul>
+          </div>
+        ) : (
+          <div className="rail-item">
+            <button
+              type="button"
+              className="rail-icon"
+              aria-label="Navigate"
+              aria-expanded="false"
+              onClick={() => setNavOpen(true)}
+            >
+              <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M12 3l7 17-7-4-7 4z" />
+              </svg>
+              {currentStop >= 0 && <span className="rail-dot" aria-hidden="true" />}
+            </button>
+          </div>
+        )}
       </div>
     </>
   );
@@ -249,6 +287,33 @@ const railStyles = `
   }
   .rail-left { left: 22px; }
   .rail-right { right: 22px; width: 262px; }
+  .rail-right.closed { width: auto; align-items: flex-end; }
+  .rail-head { display: flex; align-items: center; justify-content: space-between; }
+  .rail-head .rail-eyebrow { margin-bottom: 9px; }
+  .rail-close {
+    width: 28px;
+    height: 28px;
+    margin: -6px -6px 0 0;
+    border: 0;
+    border-radius: 50%;
+    background: var(--soft);
+    color: var(--deep);
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .rail-icon { position: relative; }
+  .rail-dot {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    width: 9px;
+    height: 9px;
+    border-radius: 50%;
+    background: var(--pink);
+    border: 2px solid var(--card);
+  }
   .rail-card {
     pointer-events: auto;
     background: var(--card);
@@ -417,7 +482,7 @@ const railStyles = `
   }
 
   /* Tablets and phones: the day-plan / contact icons sit top-right as round
-     icons, and the Navigate card is permanently open along the bottom. */
+     icons, and the Navigate card opens along the bottom (icon when closed). */
   @media (max-width: 1160px) {
     .rail-left {
       top: calc(14px + env(safe-area-inset-top, 0px));
@@ -444,6 +509,7 @@ const railStyles = `
       bottom: calc(12px + env(safe-area-inset-bottom, 0px));
       width: auto;
     }
+    .rail-right.closed { left: auto; }
     .rail-right .rail-card {
       padding: 12px 13px;
       max-height: calc(100dvh - 12rem);
