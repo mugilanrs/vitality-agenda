@@ -1,9 +1,9 @@
 @import "tailwindcss";
 
 /* ---------- Theme (ported from legacy index.html) ----------
- * Pink accents, light / dark palette, card + shadow tokens.
- * Dark is the default (follows system) and can be forced via
- * `data-theme="dark"` on <html>; `data-theme="light"` forces light.
+ * Pink accents, light palette, card + shadow tokens.
+ * Light is the only theme: <html data-theme="light"> in app/layout.tsx also
+ * keeps the 3D materials (lib/themedMaterials.ts) light on dark-mode devices.
  */
 
 :root {
@@ -26,42 +26,6 @@
   --background: var(--paper);
   --foreground: var(--ink);
   --slate-quiet: var(--muted);
-}
-
-:root:not([data-theme="light"]) {
-  @media (prefers-color-scheme: dark) {
-    color-scheme: dark;
-    --paper: #15111a;
-    --ground: #1a141f;
-    --world-a: #171219;
-    --world-b: #221824;
-    --soft: #3a2330;
-    --pink: #ff3d72;
-    --deep: #ff6c95;
-    --ink: #f4edf1;
-    --muted: #a598a1;
-    --line: rgba(255, 255, 255, 0.12);
-    --line-strong: rgba(255, 255, 255, 0.2);
-    --card: #1d1622;
-    --shadow: 0 18px 44px -20px rgba(0, 0, 0, 0.7);
-  }
-}
-
-:root[data-theme="dark"] {
-  color-scheme: dark;
-  --paper: #15111a;
-  --ground: #1a141f;
-  --world-a: #171219;
-  --world-b: #221824;
-  --soft: #3a2330;
-  --pink: #ff3d72;
-  --deep: #ff6c95;
-  --ink: #f4edf1;
-  --muted: #a598a1;
-  --line: rgba(255, 255, 255, 0.12);
-  --line-strong: rgba(255, 255, 255, 0.2);
-  --card: #1d1622;
-  --shadow: 0 18px 44px -20px rgba(0, 0, 0, 0.7);
 }
 
 @theme inline {
