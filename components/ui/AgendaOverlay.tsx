@@ -166,6 +166,29 @@ function DestinationCard({ building }: { building: BuildingSpec }) {
           {info.host}
         </div>
       )}
+      {info.details && info.details.length > 0 && (
+        <dl
+          className="mt-3 grid max-h-[34vh] grid-cols-2 gap-x-4 gap-y-2.5 overflow-y-auto border-t pt-3"
+          style={{ borderColor: "var(--line)" }}
+        >
+          {info.details.map((d) => (
+            <div key={d.label} className="min-w-0">
+              <dt
+                className="text-[10px] font-bold uppercase tracking-[0.14em]"
+                style={{ color: "var(--muted)" }}
+              >
+                {d.label}
+              </dt>
+              <dd
+                className="mt-0.5 text-[13px] font-semibold leading-snug"
+                style={{ color: "var(--ink)" }}
+              >
+                {d.value}
+              </dd>
+            </div>
+          ))}
+        </dl>
+      )}
       <div className="mt-3 flex items-center gap-2.5">
         <button
           type="button"

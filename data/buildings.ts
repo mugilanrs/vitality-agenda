@@ -75,6 +75,8 @@ export type BuildingSpec = {
     title: string;
     time?: string;
     host?: string;
+    /** Label / value rows shown on the destination card. */
+    details?: { label: string; value: string }[];
   };
 };
 

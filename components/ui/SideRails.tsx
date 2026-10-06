@@ -20,12 +20,16 @@ import { useNow } from "@/lib/useNow";
  * Hidden while the welcome intro is up or when the user is inside an interior
  * room (so interior chrome never fights the room's own leave button).
  */
+const HINT_KEY = "vv_nav_hint_seen";
+
 export default function SideRails() {
   const [welcome, setWelcome] = useState(journey.welcome);
   const [focus, setFocusState] = useState(() => ({ ...journey.focus }));
   const [openIcon, setOpenIcon] = useState<string | null>(null);
   // The Navigate card starts closed on every screen size.
   const [navOpen, setNavOpen] = useState(false);
+  // "Tap here to navigate" hint: shown until the user taps it or the icon.
+  const [hint, setHint] = useState(false);
 
   useEffect(() => {
     const applyW = () => setWelcome(journey.welcome);
@@ -39,6 +43,28 @@ export default function SideRails() {
       un2();
     };
   }, []);
+
+  // Show the hint once the map is up, unless this device has dismissed it.
+  useEffect(() => {
+    let seen = false;
+    try {
+      seen = localStorage.getItem(HINT_KEY) === "1";
+    } catch {
+      // Storage blocked: just show it for this visit.
+    }
+    if (seen) return;
+    const t = window.setTimeout(() => setHint(true), 1200);
+    return () => window.clearTimeout(t);
+  }, []);
+
+  const dismissHint = () => {
+    setHint(false);
+    try {
+      localStorage.setItem(HINT_KEY, "1");
+    } catch {
+      // ignore
+    }
+  };
 
   if (welcome) return null;
   if (focus.level === "inside") return null;
@@ -137,13 +163,21 @@ export default function SideRails() {
             </ul>
           </div>
         ) : (
-          <div className="rail-item">
+          <div className="rail-item rail-nav">
+            {hint && (
+              <button type="button" className="rail-hint" onClick={dismissHint}>
+                Tap here to navigate
+              </button>
+            )}
             <button
               type="button"
               className="rail-icon"
               aria-label="Navigate"
               aria-expanded="false"
-              onClick={() => setNavOpen(true)}
+              onClick={() => {
+                dismissHint();
+                setNavOpen(true);
+              }}
             >
               <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
                 <path d="M12 3l7 17-7-4-7 4z" />
@@ -286,8 +320,55 @@ const railStyles = `
     pointer-events: none;
   }
   .rail-left { left: 22px; }
-  .rail-right { right: 22px; width: 262px; }
-  .rail-right.closed { width: auto; align-items: flex-end; }
+  /* Navigate: bottom-centre on every screen, raised off the browser bar. */
+  .rail-right {
+    top: auto;
+    right: auto;
+    left: 50%;
+    transform: translateX(-50%);
+    bottom: calc(2.75rem + env(safe-area-inset-bottom, 0px));
+    width: 262px;
+  }
+  .rail-right.closed { width: auto; align-items: center; }
+  .rail-nav { position: relative; display: flex; justify-content: center; }
+  .rail-hint {
+    position: absolute;
+    bottom: calc(100% + 12px);
+    left: 50%;
+    transform: translateX(-50%);
+    white-space: nowrap;
+    pointer-events: auto;
+    border: 1px solid rgba(24, 32, 51, 0.08);
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.92);
+    color: #5b5560;
+    font: inherit;
+    font-size: 12px;
+    font-weight: 600;
+    padding: 7px 14px;
+    box-shadow: 0 6px 18px -8px rgba(24, 32, 51, 0.3);
+    cursor: pointer;
+    animation: rail-hint-in 0.5s ease both;
+  }
+  .rail-hint::after {
+    content: "";
+    position: absolute;
+    left: 50%;
+    bottom: -5px;
+    width: 9px;
+    height: 9px;
+    background: rgba(255, 255, 255, 0.92);
+    border-right: 1px solid rgba(24, 32, 51, 0.08);
+    border-bottom: 1px solid rgba(24, 32, 51, 0.08);
+    transform: translateX(-50%) rotate(45deg);
+  }
+  @keyframes rail-hint-in {
+    from { opacity: 0; transform: translate(-50%, 4px); }
+    to { opacity: 1; transform: translate(-50%, 0); }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .rail-hint { animation: none; }
+  }
   .rail-head { display: flex; align-items: center; justify-content: space-between; }
   .rail-head .rail-eyebrow { margin-bottom: 9px; }
   .rail-close {
@@ -502,14 +583,19 @@ const railStyles = `
     }
     .rail-item.open .rail-pop { transform: translateX(0); }
     .rail-right {
-      top: auto;
       transform: none;
       left: 12px;
       right: 12px;
       bottom: calc(12px + env(safe-area-inset-bottom, 0px));
       width: auto;
     }
-    .rail-right.closed { left: auto; }
+    /* Closed: back to the centred, raised icon. */
+    .rail-right.closed {
+      left: 50%;
+      right: auto;
+      transform: translateX(-50%);
+      bottom: calc(2.75rem + env(safe-area-inset-bottom, 0px));
+    }
     .rail-right .rail-card {
       padding: 12px 13px;
       max-height: calc(100dvh - 12rem);

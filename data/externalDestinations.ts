@@ -57,6 +57,18 @@ export const BUILDING_FISHERMAN_COVE: BuildingSpec = {
   },
 };
 
+const TBI = "To be included";
+
+/** Pickup details on the Airport card — placeholders until real values exist. */
+export const AIRPORT_DETAILS = [
+  { label: "Flight number", value: TBI },
+  { label: "Arrival time", value: TBI },
+  { label: "Host", value: TBI },
+  { label: "Cab number", value: TBI },
+  { label: "Cab plate number", value: TBI },
+  { label: "Driver name", value: TBI },
+];
+
 export const BUILDING_AIRPORT: BuildingSpec = {
   id: "airport",
   name: "Airport",
@@ -73,5 +85,6 @@ export const BUILDING_AIRPORT: BuildingSpec = {
   floors: [],
   external: {
     title: "Arrival / Departure",
+    details: AIRPORT_DETAILS,
   },
 };
