@@ -1,7 +1,7 @@
 /**
  * SERVER ONLY — Chennai arrival details per attendee. Flight and time live
- * here; pickup-person and driver names/phones come from env vars
- * (PICKUP_P1_NAME, DRIVER_D1_PHONE, … see .env.example). An attendee only
+ * here; pickup-person and driver "Name - Number" lists come from env vars
+ * (PICKUP_PERSONS, DRIVERS — see .env.example). An attendee only
  * ever receives their own rows; admin receives everyone's.
  */
 
@@ -34,21 +34,32 @@ const ARRIVALS: Record<AttendeeId, Arrival> = {
   a7: { flight: AI_9774, time: "09:40", pickup: "P3", driver: "D3" },
 };
 
-function envText(name: string): string {
-  return process.env[name]?.trim().slice(0, 80) ?? "";
+/**
+ * Reads PICKUP_PERSONS / DRIVERS: entries separated by ";", in order
+ * (1st = P1/D1, 2nd = P2/D2, 3rd = P3/D3), each "Name - Number".
+ */
+function listFromEnv(envName: "PICKUP_PERSONS" | "DRIVERS"): { name: string; phone: string }[] {
+  const raw = process.env[envName] ?? "";
+  return raw.split(";").map((entry) => {
+    const text = entry.trim();
+    const cut = text.lastIndexOf(" - ");
+    const name = (cut >= 0 ? text.slice(0, cut) : text).trim().slice(0, 80);
+    const phone = (cut >= 0 ? text.slice(cut + 3) : "").trim().slice(0, 30);
+    return { name, phone };
+  });
 }
 
-function person(prefix: "PICKUP" | "DRIVER", key?: string) {
-  if (!key) return { name: NA, phone: NA, href: undefined };
-  const name = envText(`${prefix}_${key}_NAME`) || NA;
-  const phone = envText(`${prefix}_${key}_PHONE`);
+function person(envName: "PICKUP_PERSONS" | "DRIVERS", key?: string) {
+  const entry = key ? listFromEnv(envName)[Number(key[1]) - 1] : undefined;
+  const name = entry?.name || NA;
+  const phone = entry?.phone ?? "";
   const dial = phone.replace(/[^\d+]/g, "");
   return { name, phone: phone || NA, href: dial ? `tel:${dial}` : undefined };
 }
 
 function rowsFor(a: Arrival): ArrivalRow[] {
-  const p = person("PICKUP", a.pickup);
-  const d = person("DRIVER", a.driver);
+  const p = person("PICKUP_PERSONS", a.pickup);
+  const d = person("DRIVERS", a.driver);
   return [
     { label: "Flight", value: a.flight },
     { label: "Arrival time", value: a.time },
