@@ -2,6 +2,7 @@ import { cookies } from "next/headers";
 import { agendaForAttendee } from "@/data/agendaSource";
 import { ATTENDEES } from "@/data/attendees";
 import { SESSION_COOKIE, readSessionToken } from "@/lib/server/auth";
+import { arrivalsForViewer } from "@/lib/server/arrivals";
 import { contactsFromEnv } from "@/lib/server/contacts";
 
 /**
@@ -19,7 +20,12 @@ export async function GET() {
   if (!id) return Response.json({ error: "Not signed in." }, { status: 401 });
   const name = id === "admin" ? "Admin" : (ATTENDEES.find((a) => a.id === id)?.fullName ?? "");
   return Response.json(
-    { name, rooms: agendaForAttendee(id), contacts: contactsFromEnv() },
+    {
+      name,
+      rooms: agendaForAttendee(id),
+      contacts: contactsFromEnv(),
+      arrivals: arrivalsForViewer(id),
+    },
     { headers: { "Cache-Control": "no-store" } },
   );
 }

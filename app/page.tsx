@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
-import { setAgendaRooms, setProfile, type Contact } from "@/lib/agendaStore";
+import { setAgendaRooms, setArrivals, setProfile, type ArrivalGroup, type Contact } from "@/lib/agendaStore";
 import type { AgendaRoom } from "@/data/agendaRooms";
 import CampusScene from "@/components/campus/CampusScene";
 import CampusJourney, {
@@ -43,9 +43,11 @@ export default function Home() {
           name: string;
           rooms: AgendaRoom[];
           contacts: Contact[];
+          arrivals: ArrivalGroup[];
         };
         if (cancelled) return;
         setAgendaRooms(data.rooms);
+        setArrivals(data.arrivals);
         setProfile(data.name, data.contacts);
         setReady(true);
       })

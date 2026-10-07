@@ -77,6 +77,8 @@ export type BuildingSpec = {
     host?: string;
     /** Label / value rows shown on the destination card. */
     details?: { label: string; value: string }[];
+    /** Per-attendee rows loaded at login (see lib/agendaStore). Airport only. */
+    perAttendee?: boolean;
   };
 };
 

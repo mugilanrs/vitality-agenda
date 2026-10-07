@@ -10,6 +10,10 @@ import type { BuildingId } from "@/lib/journey";
 
 export type Contact = { role: string; name: string; phone: string };
 
+export type ArrivalRow = { label: string; value: string; href?: string };
+export type ArrivalGroup = { who?: string; rows: ArrivalRow[] };
+
+let arrivals: ArrivalGroup[] = [];
 let rooms: AgendaRoom[] = [];
 let attendeeName = "";
 let contacts: Contact[] = [];
@@ -21,6 +25,14 @@ export function setAgendaRooms(next: AgendaRoom[]) {
 export function setProfile(name: string, nextContacts: Contact[]) {
   attendeeName = name;
   contacts = nextContacts;
+}
+
+export function setArrivals(next: ArrivalGroup[]) {
+  arrivals = next;
+}
+
+export function getArrivals(): ArrivalGroup[] {
+  return arrivals;
 }
 
 export function getAttendeeName(): string {
